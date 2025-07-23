@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Login & Sign Up</title>
+  <link rel="stylesheet" href="style2.css">
+</head>
+
+<body>
+
+  <div class="container" id="mainContainer">
+    <div class="form-container">
+      <form action="">
+        <h2>Submit Project Here :</h2>
+        <div class="input-group">
+
+          <input type="text" placeholder="Full Name" id="FullName">
+          <input type="text" placeholder="Midle Name" id="MidleName">
+          <input type="text" placeholder="Last Name" id="lastName">
+          <input type="text" placeholder="Enrollment Number" id="enrollment">
+          <input type="search" placeholder="Branch" id="branch">
+          <input type="search" placeholder="Department" id="department">
+          <input type="text" placeholder="Semester" id="semester">
+          <input type="text" placeholder="Mobile Number" id="mobileNumber">
+          <input type="date" placeholder="submit Date" id="date">
+          <div class="disc">
+ 
+            <input type="text" placeholder="Project Descriptions and title" id="PD&T">
+          </div>
+
+          
+          <div class="uploadContainer">
+            <h2>Upload PDF</h2>
+            
+          <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" id="pdfFile" name="pdfFile" accept="application/pdf" required />
+            <button type="submit">Upload</button>
+          </form>
+
+          <div class="preview" id="previewBox">
+            <embed id="pdfPreview" type="application/pdf" width="100%" height="400px" />
+          </div>
+
+          <h3>Uploaded PDFs:</h3>
+          <ul id="pdfList"></ul>
+        </div>
+        <div class="submit_btn">
+          <button type="button" id="btnSignUp">Register</button>
+        </div>
+        
+      </div>
+      </form>
+      <script src="script2.js"></script>
+
+</body>
+
+</html>

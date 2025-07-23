@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Login & Sign Up</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="container" id="mainContainer">
+    <div class="form-container">
+
+
+
+      <!-- Login Form Changes give them a unique id -->
+      <img class="ipic" src="1.png" alt="">
+
+
+      <form class="form-box" id="loginForm">
+        <h2>Welcome Back...</h2>
+        <h3>Enter your Email id and Password</h3>
+        
+        <div class="input-group">
+          
+          <input type="email" placeholder="Email" id="loginEmail">
+          <div class="password-container">
+
+            <input type="password" placeholder="Password" id="password">
+          </div>
+          <button type="button" id="btnLogin" onclick="loginPage()">Login</button>
+          <!-- <button class="toggle" id="togglePassword">
+          ho
+          </button> -->
+          
+        </div>
+        <div class="switch">
+          Don't have an account? <span onclick="switchToSignup()">Sign Up</span>
+        </div>
+
+      </form>
+      
+      <!-- Sign Up Form -->
+      <div class="signContainer">
+
+        <form class="form-box2" id="signUpForm">
+          <h2>Sign Up</h2>
+          <h3>Select Your Profession</h3>
+          <div class="choiceContainer">
+
+            <div class="student_login">
+              <label for="student">
+                <input type="radio" name="role" id="studentRoll" onclick="studentimg('student');"> I`am Student
+              </label>
+            </div>
+            <div class="teacher_login">
+              <label for="teacher">
+                <input type="radio" name="role" id="teacherRoll" onclick="studentimg('teacher');"> I`am Teacher
+              </label>
+            </div>
+          </div>
+          
+           
+          
+          <div class="input-group2">
+            
+            <input type="text" placeholder="Full Name" id="signUpName">
+            <input type="email" placeholder="Email" id="signUpEmail">
+            <input type="password" placeholder="Password" id="signUpPassword">
+
+            <button type="button" id="btnSignUp" onclick=" formpage() ">Register</button>
+            
+          </div>
+          
+          <div class="switch">
+            <br>
+              <div class="accounts">
+                
+                <a href="https://accounts.google.com" target="_blank">
+                  <img src="google.png" alt="Google" width="25">
+                </a>
+                <a href="https://github.com/login" target="_blank">
+                  <img src="github.png" alt="github" width="25">
+                </a>
+                <a href="https://www.linkedin.com/login" target="_blank">
+                  <img src="linkedin.png" alt="linkedin" width="25">
+                </a>
+              </div>
+              
+            </p>
+            Already have an account? <span onclick="switchToLogin()">Login</span>
+          </div>
+        </form>
+      </div>
+      <img class="ipic2" src="2.png " alt="">
+      <!-- <img class="ipic2" src="s1.png" alt=""> -->
+      
+      <!-- User Data Intput -->
+
+    </div>
+  </div>
+
+  
+  <!-- <button id="btn-toggle2" onclick="switchpage()">Switch</button> -->
+  <!-- Switch Form JS -->
+  <script src="script.js"></script>
+  <!-- FireBase App (core sdk) -->
+  <script type="module" src="app.js"></script>
+
+
+</body>
+
+</html>

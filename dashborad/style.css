@@ -1,0 +1,90 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    background-color: rgb(213, 210, 210);
+}
+
+.Container{
+    border: 2px solid purple;
+    background-color: white;
+    height: 50vh;
+    width: 30rem;
+    /* left: 20rem; */
+    margin-top: 10px;
+    border-radius: 20px;
+    
+}
+.Container1{
+    border: 2px solid purple;
+    background-color: white;
+    height: 50vh;
+    width: 30rem;
+    /* left: 20rem; */
+    margin-top: 10px;
+    border-radius: 20px;
+    
+}
+.Container2{
+    border: 2px solid purple;
+    background-color: white;
+    height: 100vh;
+    width: 45rem;
+    margin-left: 30px;
+    margin-top: 10px;
+    border-radius: 20px;
+}
+.containContainer{
+    display: flex;
+    /* justify-content: space-between; */
+    align-items: top;
+   
+    
+    
+
+}
+.upperContainer{
+    /* border: 2px solid yellow; */
+    position:relative;
+    
+    
+    
+}
+.navbar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* border: 2px solid red; */
+    width: 100%;
+    height: 3rem;
+    
+}
+ .leftnav{
+    /* border: 2px solid greenyellow; */
+    padding: 5px;
+    border-radius: 20px;
+    font-size: 1.5rem ;
+    background-color: white;
+    margin-left: 8px;
+    margin-top: 5px;
+    left: auto;
+    /* width: 40rem; */
+    
+}
+ .navbar2{
+    /* border: 2px solid rgb(47, 78, 255); */
+    padding: 5px;
+    border-radius: 20px;
+    font-size: 1.5rem ;
+    background-color: white;
+    margin-left: 8px;
+    margin-top: 5px;
+    left: auto;
+    width: 10rem;
+    text-align: center;
+    
+}
+nav a{
+    margin: 5px;
+}

@@ -47,7 +47,7 @@ function loginPage(){
 }
 
 function NewWindow() {
-  window.location.href = "views/infoForm.html";
+  window.location.href = "/views/infoForm.html";
 }
 
 function formpage() {

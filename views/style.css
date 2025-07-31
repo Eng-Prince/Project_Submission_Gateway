@@ -6,6 +6,10 @@
 }
 
 body {
+  background: linear-gradient(135deg, #1d2b64, #f8cdda);
+
+}
+.MainContainer{
   height: 100vh;
   background: linear-gradient(135deg, #1d2b64, #f8cdda);
   display: flex;
@@ -13,6 +17,7 @@ body {
   justify-content: center;
   overflow: hidden;
   animation: backgroundMove 10s infinite alternate ease-in-out;
+
 }
 
 @keyframes backgroundMove {
@@ -75,10 +80,10 @@ body {
   position: relative;
   /* padding: 100px; */
   width: 30rem;
-  height: 35rem;
+  height: 40rem;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   transition: transform 0.8s ease-in-out;
 }
 
@@ -129,7 +134,7 @@ h3 {
   font-size: 25px;
   font-weight: 500;
   overflow-y: scroll;
-  height: 80vh;
+  height: 78vh;
   /* display: grid;
       grid-template-columns: 22rem 22rem 22rem; */
 
@@ -187,6 +192,10 @@ button {
   cursor: pointer;
   transition: 0.4s ease;
 }
+.Upload-btn{
+  width: 10rem;
+  margin: 15px;
+}
 
 button:hover {
   background: #ffb5d6;
@@ -198,7 +207,43 @@ input:hover {
   background: #c0bdbe46;
   transform: scale(1);
   border: none;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+}
+.DiscContainer{
+  background-color: #2a3870;
+  border-width: 2px;
+  margin: 13px 13px 0px 0px;
+  /* margin-top: 13px;
+  margin-right: 13px; */
+  padding-top: 15px;
+  border-radius: 15px;
+  box-shadow: 0px 0px 20px rgba(55, 52, 52, 0.623);
+  height: 20rem;
+}
+embed{
+  height: 20rem;
+  width: 23.2rem;
+}
+
+#fileInput{
+  background-color: white;
+  color: #1d2b64;
+}
+.Project-view{
+  position:absolute;
+  background-color: rgb(192, 255, 212);
+  font-size: 15px;
+  font-weight: 400;
+  font-family: Verdana;
+  font-variant: small-caps;
+  border-radius: 5px;
+  height:2.5rem;
+  width: 8rem;
+  display: flex;
+  margin: 5px 0 0 5px;
+  justify-content: center;
+  align-items: center;
+  
 }
 
 

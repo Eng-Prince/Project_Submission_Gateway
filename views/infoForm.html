@@ -4,14 +4,16 @@
 <head>
   <meta charset="UTF-8">
   <title>Login & Sign Up</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <div class="container" id="mainContainer">
-    <div class="form-container">
-      <form action="">
+  <button class="Project-view">My Project</button>
+  <div class="MainContainer">
+    <div class="container" id="mainContainer">
+      <div class="form-container">
+        <form action="">
         <h2>Submit Project Here :</h2>
         <div class="input-group">
 
@@ -19,31 +21,52 @@
           <input type="text" placeholder="Midle Name" id="MidleName">
           <input type="text" placeholder="Last Name" id="lastName">
           <input type="text" placeholder="Enrollment Number" id="enrollment">
-          <input type="search" placeholder="Branch" id="branch">
-          <input type="search" placeholder="Department" id="department">
+          <input type="search" placeholder="Branch" id="branch" list="nameBr">
+          <datalist id="nameBr">
+            <option value="Computer Science and Engineering"></option>
+            <option value=""></option>
+            <option value="Department of low"></option>
+            <option value="Department of Agricultural"></option>
+            <option value="Department of Nursing"></option>
+            <option value="Computer Scicence"></option>
+          </datalist>
+          <input type="search" placeholder="Department" id="department" list="nameDep">
+          <datalist id="nameDep">
+            <option value="Department of Engineering"></option>
+            <option value="Department of Civil "></option>
+            <option value="Department of low"></option>
+            <option value="Department of Agricultural"></option>
+            <option value="Department of Nursing"></option>
+            <option value="Computer Scicence"></option>
+          </datalist>
           <input type="text" placeholder="Semester" id="semester">
           <input type="text" placeholder="Mobile Number" id="mobileNumber">
           <input type="date" placeholder="submit Date" id="date">
           
-          <textarea  placeholder="Describe your project here..." rows="6" cols="40"></textarea>
-          <input type="url" placeholder="Project URL" id="url">
+          <div class="DiscContainer">
+            <input type="text" placeholder="Write Your Project title" id="Project-tittle">
+            <textarea placeholder="Describe your project here..." rows="6" cols="40"></textarea>
+            <input type="url" placeholder="Project URL" id="url">
+            <input type="file" id="fileInput" accept=".pdf" />
+            <h3>'Upload You Project File in pdf fomate'</h3>
+            <button class="Upload-btn" onclick="uploadFile()">Upload</button>
+            
+            
+            
+            <div class="submit_btn">
+              <div id="previewBox">
+                <h3>File Preview:</h3>
+                <div id="filePreview"></div>
+              </div>
+            </div>
+              <button type="button" id="btnSignUp">Register</button>
+            </div>
 
-           <input type="file" id="fileInput" accept=".pdf" />
-           <button onclick="uploadFile()">Upload</button>
 
-           <div id="previewBox">
-    <h3>File Preview:</h3>
-    <div id="filePreview"></div>
-  </div>
-
-          <div class="submit_btn">
-            <button type="button" id="btnSignUp">Register</button>
-          </div>
-
-       
       </form>
-     <script src="/js/script.js"></script>
-
+      <script src="script.js"></script>
+      
+    </div>
 </body>
 
 </html>

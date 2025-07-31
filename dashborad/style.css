@@ -6,45 +6,56 @@ body{
     background-color: rgb(213, 210, 210);
 }
 
-.Container{
-    border: 2px solid purple;
-    background-color: white;
-    height: 50vh;
-    width: 30rem;
-    /* left: 20rem; */
-    margin-top: 10px;
-    border-radius: 20px;
-    
+.containContainer {
+  display: grid;
+  /* position: relative; */
+  grid-template-columns: auto auto ;     /* 2 columns */
+  grid-template-rows: 23rem 20px 20px;   /* 3 rows */
+  gap: 0px;                                /* No gap between grid items */
+  padding: 8px;
 }
-.Container1{
-    border: 2px solid purple;
-    background-color: white;
-    height: 50vh;
-    width: 30rem;
-    /* left: 20rem; */
-    margin-top: 10px;
-    border-radius: 20px;
-    
+
+/* First Box */
+.Container {
+  border: 2px solid rgb(26, 255, 10);
+  background-color: white;
+  height: 22rem;
+  width: 28rem;
+  grid-column: 1;
+  grid-row: 1;
+  border-radius: 20px;
 }
-.Container2{
-    border: 2px solid purple;
-    background-color: white;
-    height: 100vh;
-    width: 45rem;
-    margin-left: 30px;
-    margin-top: 10px;
-    border-radius: 20px;
+
+/* Second Box */
+.Container1 {
+  border: 2px solid rgb(255, 6, 6);
+  background-color: white;
+  height: 13rem;
+  width: 28rem;
+  grid-column: 1px;
+  grid-row: 2;
+  border-radius: 20px;
 }
-.containContainer{
-    display: flex;
-    /* justify-content: space-between; */
-    align-items: top;
-   
-    
-    
+
+/* Third (Taller) Box */
+.Container2 {
+  border: 2px solid black;
+  background-color: white;
+  height: calc(25vh + 33vh);  /* Equal to combined height of .Container and .Container1 */
+  width: 45rem;
+  grid-column: 2;
+  grid-row: 1 / span 2;      
+  border-radius: 20px;
 
 }
-.upperContainer{
+
+.canvasContainer{
+    /* border: 2px solid red; */
+    /* margin-left: 12px; */
+    width: 27rem;
+    height: 21.5rem;
+}
+  .upperContainer{
     /* border: 2px solid yellow; */
     position:relative;
     

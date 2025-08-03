@@ -9,19 +9,29 @@
 
 <body>
 
-  <button class="Project-view">My Project</button>
+  <div class="Project-btn-Container">
+     <h3>Total Projects: <span id="projectCount">0</span></h3>
+    <!-- <button class="Project-view" onclick="showAllProjects()">My Project</button>   -->
+      <div id="projectList"></div>
+  </div>
+
   <div class="MainContainer">
     <div class="container" id="mainContainer">
       <div class="form-container">
-        <form action="">
+        <form action="" >
+          <div id="customAlert" class="alert-box">
+     <span id="alertMessage"></span><br>
+     <button onclick="closeAlert()">OK</button>
+   </div>
         <h2>Submit Project Here :</h2>
-        <div class="input-group">
+        
+        <div class="input-group" id="inputGroup">
 
-          <input type="text" placeholder="Full Name" id="FullName">
+          <input type="text" placeholder="First Name" id="FirstName" required>
           <input type="text" placeholder="Midle Name" id="MidleName">
-          <input type="text" placeholder="Last Name" id="lastName">
-          <input type="text" placeholder="Enrollment Number" id="enrollment">
-          <input type="search" placeholder="Branch" id="branch" list="nameBr">
+          <input type="text" placeholder="Last Name" id="lastName" required>
+          <input type="text" placeholder="Enrollment Number" id="enrollment" required>
+          <input type="search" placeholder="Branch" id="branch" list="nameBr" required>
           <datalist id="nameBr">
             <option value="Computer Science and Engineering"></option>
             <option value=""></option>
@@ -30,7 +40,7 @@
             <option value="Department of Nursing"></option>
             <option value="Computer Scicence"></option>
           </datalist>
-          <input type="search" placeholder="Department" id="department" list="nameDep">
+          <input type="search" placeholder="Department" id="department" required list="nameDep">
           <datalist id="nameDep">
             <option value="Department of Engineering"></option>
             <option value="Department of Civil "></option>
@@ -39,15 +49,15 @@
             <option value="Department of Nursing"></option>
             <option value="Computer Scicence"></option>
           </datalist>
-          <input type="text" placeholder="Semester" id="semester">
-          <input type="text" placeholder="Mobile Number" id="mobileNumber">
-          <input type="date" placeholder="submit Date" id="date">
+          <input type="text" placeholder="Semester" id="semester" required >
+          <input type="text" placeholder="Mobile Number" id="mobileNumber" required >
+          <input type="date" placeholder="submit Date" id="date" required >
           
           <div class="DiscContainer">
-            <input type="text" placeholder="Write Your Project title" id="Project-tittle">
+            <input type="text" placeholder="Write Your Project title" id="Project-tittle" required>
             <textarea placeholder="Describe your project here..." rows="6" cols="40"></textarea>
-            <input type="url" placeholder="Project URL" id="url">
-            <input type="file" id="fileInput" accept=".pdf" />
+            <input type="url" placeholder="Project URL" id="url" required>
+            <input type="file" id="fileInput"  accept=".pdf" />
             <h3>'Upload You Project File in pdf fomate'</h3>
             <button class="Upload-btn" onclick="uploadFile()">Upload</button>
             
@@ -59,7 +69,7 @@
                 <div id="filePreview"></div>
               </div>
             </div>
-              <button type="button" id="btnSignUp">Register</button>
+              <button type="submit" id="btnSignUp" onclick="showProjects()">Register</button>
             </div>
 
 

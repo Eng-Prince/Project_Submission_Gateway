@@ -285,3 +285,23 @@
 /* .hidden {
   display: block;
 } */
+
+/*
+  This is for getting the red error
+*/
+
+  .input-group  .error {
+    /* disply: "block"  make sure it's below input */
+  margin-top: 2px;      /* small gap */
+  font-size: 14px;
+  color: red;
+  display: none
+  }
+
+  .input-group2  .error {
+    /* disply: "block"  make sure it's below input */
+  margin-top: 2px;      /* small gap */
+  font-size: 14px;
+  color: red;
+  display: none
+}

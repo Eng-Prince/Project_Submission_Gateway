@@ -1,3 +1,7 @@
+/* This is a JavaScript logic which we use to make the webpage dynamic 
+   i.e changning login and signup page or handling UI 
+*/
+
 const container = document.getElementById("mainContainer");
 
 function switchToSignup() {
@@ -47,7 +51,7 @@ function loginPage(){
 }
 
 function NewWindow() {
-  window.location.href = "/views/infoForm.html";
+  window.location.href = "01_html/Submit_Page.html";
 }
 
 function formpage() {
@@ -76,9 +80,9 @@ function studentimg(role){
   const image = document.querySelector(".ipic2");
 
       if (role === "student") {
-        image.src = "s1.png";
+        image.src = "images/s1.png";
       } else if (role === "teacher") {
-        image.src = "t1.png";
+        image.src = "images/t1.png";
       }
 }
 

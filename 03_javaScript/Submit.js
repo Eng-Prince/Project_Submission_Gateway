@@ -146,4 +146,16 @@ function deleteProject() {
   // showAllProjects();
 }
 
+function saveProfile() {
+      let name = document.getElementById("name").value;
+      let email = document.getElementById("email").value;
 
+      if(name && email) {
+        // Hide popup
+        document.getElementById("popupOverlay").classList.add("hidden");
+        // Remove blur from background page
+        document.getElementById("blur_bg").style.filter = "none";
+      } else {
+        alert("Please fill all fields!");
+      }
+    }

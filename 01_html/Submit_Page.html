@@ -4,35 +4,41 @@
 <head>
   <meta charset="UTF-8">
   <title>Login & Sign Up</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/02_css/Submit.css">
 </head>
-
 <body>
 
-  <div class="Project-btn-Container">
-     <h3>Total Projects: <span id="projectCount">0</span></h3>
-    <!-- <button class="Project-view" onclick="showAllProjects()">My Project</button>   -->
-      <div id="projectList"></div>
-  </div>
-
-  <div class="MainContainer">
-    <div class="container" id="mainContainer">
+  <div class="popup-overlay" id="popupOverlay">
+      <div class="popup">
+        <h2>Create Profile</h2>
+        <input type="text" id="name" placeholder="Enter Name">
+        <input type="email" id="email" placeholder="Enter Email">
+        <button class="popbtn" onclick="saveProfile()">Save Profile</button>
+      </div>
+    </div>
+          
+          <div class="MainContainer" id="blur_bg">
+      <div class="Project-btn-Container">
+      <h3>Total Projects: <span id="projectCount">0</span></h3>
+      <!-- <button class="Project-view" onclick="showAllProjects()">My Project</button>   -->
+  <div id="projectList"></div>
+</div>
+      <div class="container" id="mainContainer">
       <div class="form-container">
         <form action="" >
           <div id="customAlert" class="alert-box">
-     <span id="alertMessage"></span><br>
-     <button onclick="closeAlert()">OK</button>
-   </div>
-        <h2>Submit Project Here :</h2>
-        
-        <div class="input-group" id="inputGroup">
-
-          <input type="text" placeholder="First Name" id="FirstName" required>
-          <input type="text" placeholder="Midle Name" id="MidleName">
-          <input type="text" placeholder="Last Name" id="lastName" required>
-          <input type="text" placeholder="Enrollment Number" id="enrollment" required>
-          <input type="search" placeholder="Branch" id="branch" list="nameBr" required>
-          <datalist id="nameBr">
+            <span id="alertMessage"></span><br>
+          </div>
+          <h2>Submit Project Here :</h2>
+          
+          <div class="input-group" id="inputGroup">
+            
+            <input type="text" placeholder="First Name" id="FirstName" required>
+            <input type="text" placeholder="Midle Name" id="MidleName">
+            <input type="text" placeholder="Last Name" id="lastName" required>
+            <input type="text" placeholder="Enrollment Number" id="enrollment" required>
+            <input type="search" placeholder="Branch" id="branch" list="nameBr" required>
+            <datalist id="nameBr">
             <option value="Computer Science and Engineering"></option>
             <option value=""></option>
             <option value="Department of low"></option>
@@ -71,12 +77,14 @@
             </div>
               <button type="submit" id="btnSignUp" onclick="showProjects()">Register</button>
             </div>
-
-
-      </form>
-      <script src="script.js"></script>
-      
-    </div>
+            
+            
+          </form>
+          <script src="/03_javaScript/Submit.js"></script>
+          
+          <button onclick="closeAlert()">OK</button>
+        </div>
+    
 </body>
 
 </html>

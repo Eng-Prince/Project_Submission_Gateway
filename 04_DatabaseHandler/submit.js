@@ -1,3 +1,7 @@
+/*    
+
+*/
+
 const fileInput = document.getElementById("fileInput");
 const previewBox = document.getElementById("previewBox");
 const filePreview = document.getElementById("filePreview");
@@ -79,6 +83,7 @@ function showAllProjects() {
   for (let i = 0; i < storage.length; i++) {
     const project = storage[i];
 
+  
     
     const projectTitle = project.projectTitle;
     const projectURL = project.projectUrl

@@ -7,9 +7,11 @@ import {initializeApp} from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-
 
 import {getAuth, 
         createUserWithEmailAndPassword,
-       signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js'
+        signInWithEmailAndPassword }
+        from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js'
 
-import { getFirestore, doc, getDoc, setDoc , updateDoc } from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js'
+import { getFirestore, doc, getDoc, setDoc , updateDoc } 
+        from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js'
 
 const firebaseConfig = {
   apiKey: "AIzaSyBX1GRJNR8oVn1VqGES1PFVwMDs4thqvgk",
@@ -45,6 +47,7 @@ btnSignUp.addEventListener("click", async() => {
     // Step 2: In database searching for the elements
 
     if (studSelect.checked) {
+        console.log("User select teacher")
       readDoc = doc(db, "StudentEligibility", signUpEnroll);
       console.log("Looking for readDoc", readDoc)
       snapShot = await getDoc(readDoc);
@@ -63,6 +66,7 @@ btnSignUp.addEventListener("click", async() => {
     }
 
     if (teachSelect.checked) {
+      console.log("User select teacher")
         readDoc = doc(db, "TeacherEligibility", signUpEnroll);
         snapShot = await getDoc(readDoc);
 

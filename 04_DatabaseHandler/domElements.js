@@ -9,10 +9,11 @@ const DOM = {
     btnSignIn: document.getElementById("btnLogin"),
     btnSignUp: document.getElementById("btnSignUp"),
     
-    // Login Signup Fields
+    // Login Fields
     loginEmail: document.getElementById("loginEmail"),
     loginPassword: document.getElementById("loginPassword"),
-   
+
+    // Signup Fields
     signUpEmail: document.getElementById("signUpEmail"),
     signUpEnroll: document.getElementById("signUpEnroll"),
     signUpPwd: document.getElementById("signUpPassword"),

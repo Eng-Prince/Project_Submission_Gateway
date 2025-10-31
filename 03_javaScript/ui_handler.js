@@ -4,13 +4,25 @@
 
 const container = document.getElementById("mainContainer");
 
+// We will clear the user email and pwd after they switch
 function switchToSignup() {
+    console.log("Switch to sign up")
+
   container.classList.add("active");
   // formpage();
+
+  DOM.loginEmail.value = "";
+  DOM.loginPassword.value = "";
+
 }
 
+// there we also clear the user input ie. pwd email and enroll to null
 function switchToLogin() {
+  console.log("Switch to login")
   container.classList.remove("active");
+  DOM.signUpEmail.value = "";
+  DOM.signUpEnroll.value = "";
+  DOM.signUpPwd.value = "";
 }
 
 
@@ -51,7 +63,7 @@ function loginPage(){
 }
 
 function NewWindow() {
-  window.location.href = "01_html/Submit_Page.html";
+  window.location.href = "01_html/submit_Page.html";
 }
 
 function formpage() {

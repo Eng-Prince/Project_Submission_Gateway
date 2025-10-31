@@ -6,85 +6,128 @@
   <title>Login & Sign Up</title>
   <link rel="stylesheet" href="/02_css/Submit.css">
 </head>
-<body>
 
+<body>
+  
   <div class="popup-overlay" id="popupOverlay">
-      <div class="popup">
-        <h2>Create Profile</h2>
-        <input type="text" id="name" placeholder="Enter Name">
-        <input type="email" id="email" placeholder="Enter Email">
-        <button class="popbtn" onclick="saveProfile()">Save Profile</button>
-      </div>
+    <div class="popup">
+      <h2>Create Profile</h2>
+
+      <img id="preview" src=" " alt="Profile" class="profile-pic" onclick="profileclick()">
+      <input type="file" id="fileInput" accept="image/*">
+
+      <input type="text" id="name" placeholder="Enter Name">
+      <input type="email" id="email" placeholder="Enter Email">
+      <input type="number" id="enroll" placeholder="Enter Enrollment No">
+      <input type="text" id="Year" placeholder="Enter Year">
+      <button class="popbtn" onclick="saveProfile()">Save Profile</button>
     </div>
+  </div>
+  
+  <div class="navBar">
+    <img src="/images/pf.png" width="60px" onclick="openProfile()" alt="">
+      <img src="/images/pf.png" width="60px" onclick="projectDetails()" alt="">
+      <img src="/images/pf.png" width="60px" onclick="openProfile()" alt="">
+      <img src="/images/pf.png" width="60px" onclick="openProfile()" alt="">
+      <img src="/images/pf.png" width="60px" onclick="openProfile()" alt="">
+      <img src="/images/pf.png" width="60px" onclick="logout()" alt="">
+        <!-- <h3>Total Projects: <span id="projectCount">0</span></h3>
+           <button class="Project-view" onclick="showAllProjects()">My Project</button>   -->
+           <!-- <div id="projectList"></div> --> 
           
-          <div class="MainContainer" id="blur_bg">
-      <div class="Project-btn-Container">
-      <h3>Total Projects: <span id="projectCount">0</span></h3>
-      <!-- <button class="Project-view" onclick="showAllProjects()">My Project</button>   -->
-  <div id="projectList"></div>
-</div>
-      <div class="container" id="mainContainer">
+           <!-- Overlay with Profile -->
+           <div class="profile-section">
+            <div class="overlay" id="overlay">
+            <div class="profile-box" id="profileBox">
+              <img  id="profile-cr" src="" alt="Profile Photo">
+              <div id="nameShow"> </div>
+              <p id="EmailShow">Email:</p>
+              <h3 id="EnrollmentShow">  </h3>
+              <h3 id="YearShow">  </h3>
+              <button class="close-btn" onclick="closeProfile()">Close</button>
+            </div>
+          </div>
+
+            <div class="overlay2" id="overlay2">
+            <div class="profile-box2" id="profileBox2">
+              <div class="Projct-nav">
+                <h3>Project Overview </h3>
+                <button class="close-btn2" onclick="closeProjectD()">X</button>
+                
+              </div>
+              <p></p>
+            </div>
+          </div>
+          
+        </div>
+    </div>
+
+  <div class="MainContainer" id="blur_bg">
+    
+    <div class="container" id="mainContainer">
       <div class="form-container">
-        <form action="" >
+        <form action="">
           <div id="customAlert" class="alert-box">
             <span id="alertMessage"></span><br>
           </div>
           <h2>Submit Project Here :</h2>
-          
+
           <div class="input-group" id="inputGroup">
-            
+
             <input type="text" placeholder="First Name" id="FirstName" required>
             <input type="text" placeholder="Midle Name" id="MidleName">
             <input type="text" placeholder="Last Name" id="lastName" required>
             <input type="text" placeholder="Enrollment Number" id="enrollment" required>
             <input type="search" placeholder="Branch" id="branch" list="nameBr" required>
             <datalist id="nameBr">
-            <option value="Computer Science and Engineering"></option>
-            <option value=""></option>
-            <option value="Department of low"></option>
-            <option value="Department of Agricultural"></option>
-            <option value="Department of Nursing"></option>
-            <option value="Computer Scicence"></option>
-          </datalist>
-          <input type="search" placeholder="Department" id="department" required list="nameDep">
-          <datalist id="nameDep">
-            <option value="Department of Engineering"></option>
-            <option value="Department of Civil "></option>
-            <option value="Department of low"></option>
-            <option value="Department of Agricultural"></option>
-            <option value="Department of Nursing"></option>
-            <option value="Computer Scicence"></option>
-          </datalist>
-          <input type="text" placeholder="Semester" id="semester" required >
-          <input type="text" placeholder="Mobile Number" id="mobileNumber" required >
-          <input type="date" placeholder="submit Date" id="date" required >
-          
-          <div class="DiscContainer">
-            <input type="text" placeholder="Write Your Project title" id="Project-tittle" required>
-            <textarea placeholder="Describe your project here..." rows="6" cols="40"></textarea>
-            <input type="url" placeholder="Project URL" id="url" required>
-            <input type="file" id="fileInput"  accept=".pdf" />
-            <h3>'Upload You Project File in pdf fomate'</h3>
-            <button class="Upload-btn" onclick="uploadFile()">Upload</button>
-            
-            
-            
-            <div class="submit_btn">
-              <div id="previewBox">
-                <h3>File Preview:</h3>
-                <div id="filePreview"></div>
+              <option value="Computer Science and Engineering"></option>
+              <option value=""></option>
+              <option value="Department of low"></option>
+              <option value="Department of Agricultural"></option>
+              <option value="Department of Nursing"></option>
+              <option value="Computer Scicence"></option>
+            </datalist>
+            <input type="search" placeholder="Department" id="department" required list="nameDep">
+            <datalist id="nameDep">
+              <option value="Department of Engineering"></option>
+              <option value="Department of Civil "></option>
+              <option value="Department of low"></option>
+              <option value="Department of Agricultural"></option>
+              <option value="Department of Nursing"></option>
+              <option value="Computer Scicence"></option>
+            </datalist>
+            <input type="text" placeholder="Semester" id="semester" required>
+            <input type="text" placeholder="Mobile Number" id="mobileNumber" required>
+            <input type="date" placeholder="submit Date" id="date" required>
+
+            <div class="DiscContainer">
+              <input type="text" placeholder="Write Your Project title" id="Project-tittle" required>
+              <textarea placeholder="Describe your project here..." rows="6" cols="40"></textarea>
+              <input type="url" placeholder="Project URL" id="url" required>
+              <input type="file" id="fileInput" accept=".pdf" />
+              <h3>'Upload You Project File in pdf fomate'</h3>
+              <button class="Upload-btn" onclick="uploadFile()">Upload</button>
+
+
+
+              <div class="submit_btn">
+                <div id="previewBox">
+                  <h3>File Preview:</h3>
+                  <div id="filePreview"></div>
+                </div>
               </div>
-            </div>
               <button type="submit" id="btnSignUp" onclick="showProjects()">Register</button>
             </div>
-            
-            
-          </form>
-          <script src="/03_javaScript/Submit.js"></script>
-          
-          <button onclick="closeAlert()">OK</button>
-        </div>
-    
+
+
+        </form>
+        <script src="/03_javaScript/Submit.js"></script>
+
+        <button onclick="closeAlert()">OK</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 
 </html>

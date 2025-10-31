@@ -150,12 +150,75 @@ function saveProfile() {
       let name = document.getElementById("name").value;
       let email = document.getElementById("email").value;
 
+
       if(name && email) {
-        // Hide popup
-        document.getElementById("popupOverlay").classList.add("hidden");
-        // Remove blur from background page
-        document.getElementById("blur_bg").style.filter = "none";
+      // Hide popup
+      document.getElementById("popupOverlay").classList.add("hidden");
+      // Remove blur from background page
+      document.getElementById("blur_bg").style.filter = "none";
+        document.getElementById("FirstName").value = name;
+        document.getElementById("nameShow").value = name;
+        document.getElementById("EmailShow").value = email;        
+        alert("Profile saved successfully!");
       } else {
         alert("Please fill all fields!");
       }
     }
+
+    function openProfile() {
+      document.getElementById("overlay").style.display = "flex";
+      setTimeout(() => {
+        document.getElementById("profileBox").classList.add("show");
+      }, 50); // small delay for animation
+    }
+
+    function closeProfile() {
+      document.getElementById("profileBox","profileBox2").classList.remove("show");
+      setTimeout(() => {
+        document.getElementById("overlay", "overlay2").style.display = "none";
+      }, 400); // wait for animation to finish
+    }
+    function closeProjectD() {
+      document.getElementById("profileBox2").classList.remove("show");
+      setTimeout(() => {
+        document.getElementById("overlay2").style.display = "none";
+      }, 400); // wait for animation to finish
+    }
+    
+    function projectDetails(){
+      document.getElementById("overlay2").style.display = "flex";
+      setTimeout(() => {
+        document.getElementById("profileBox2").classList.add("show");
+      }, 50);
+      
+    } 
+
+    function logout(){
+      window.location.href = "Main_index.html";
+
+    }
+
+    function profileclick (){
+    const fileinput = document.getElementById("fileInput");
+    const preview = document.getElementById("preview");
+    const profile = document.getElementById("profile-cr")
+
+    // When clicking image -> open file input
+    preview.addEventListener("click", () => {
+      fileinput.click();
+    });
+
+    // When selecting a file -> update image
+    fileInput.addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          preview.src = e.target.result;
+          profile.src = e.target.result;
+           // show uploaded image
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }

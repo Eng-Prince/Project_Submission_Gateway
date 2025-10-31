@@ -9,7 +9,8 @@ body {
   background: linear-gradient(135deg, #1d2b64, #f8cdda);
 
 }
-.MainContainer{
+
+.MainContainer {
   height: 100vh;
   width: 100%;
   background: linear-gradient(135deg, #1d2b64, #f8cdda);
@@ -17,7 +18,7 @@ body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  filter: blur(8px); 
+  /* filter: blur(8px);  */
   transition: filter 0.5s ease;
   animation: backgroundMove 10s infinite alternate ease-in-out;
 
@@ -129,7 +130,7 @@ h3 {
 }
 
 
-.input-group  {
+.input-group {
   position: relative;
   /* border: 2px solid red; */
   margin-bottom: 15px;
@@ -142,11 +143,13 @@ h3 {
       grid-template-columns: 22rem 22rem 22rem; */
 
 }
+
 .input-group::-webkit-scrollbar {
   background-color: transparent;
 }
 
-.input-group input , textarea{
+.input-group input,
+textarea {
   width: 18rem;
   height: 3rem;
   padding: 12px;
@@ -176,11 +179,13 @@ h3 {
   font-size: 16px;
   color: white;
 }
-textarea::placeholder{
-    color: #d7d2d28d;
+
+textarea::placeholder {
+  color: #d7d2d28d;
 }
-textarea:hover{
-    background: #c0bdbe46;
+
+textarea:hover {
+  background: #c0bdbe46;
   transform: scale(1);
   border: none;
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
@@ -198,7 +203,8 @@ button {
   cursor: pointer;
   transition: 0.4s ease;
 }
-.Upload-btn{
+
+.Upload-btn {
   width: 10rem;
   margin: 15px;
 }
@@ -215,7 +221,8 @@ input:hover {
   border: none;
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
 }
-.DiscContainer{
+
+.DiscContainer {
   background-color: #2a3870;
   border-width: 2px;
   margin: 13px 13px 0px 0px;
@@ -226,32 +233,33 @@ input:hover {
   box-shadow: 0px 0px 20px rgba(55, 52, 52, 0.623);
   height: 20rem;
 }
-embed{
+
+embed {
   height: 20rem;
   width: 23.2rem;
 }
 
-#fileInput{
+#fileInput {
   background-color: white;
   color: #1d2b64;
 }
-.Project-btn-Container{
+
+.navBar {
   /* border: 2px solid yellow; */
   position: absolute;
-  top: 24px;
-  left: 10px;
-  height: 30rem;
+  /* top: 24px; */
+  left: 92%;
+  height: 25rem;
   /* background-color: rgba(255, 255, 255, 0.8); */
+  width: 6rem;
   border-radius: 10px;
   padding: 10px;
   /* box-shadow: 0px 5px 15px rgba(0,0,0,0.3); */
-  display: flex;
-  flex-direction:column;
+  cursor: pointer;
+  flex-direction: column;
   align-items: center;
 }
-.Project-btn-Container h3{
-  color: white;
-}
+
 /* .Project-view{
   position:absolute;
   width: 8rem;
@@ -260,13 +268,14 @@ embed{
   border: 2px solid yellow;
   
 } */
-.delete-btn{
+.delete-btn {
   width: 8rem;
   background-color: aquamarine;
   border-radius: 10px;
   margin-left: 6rem;
 }
-#projectList{
+
+#projectList {
   display: flex;
   flex-direction: column;
   color: white;
@@ -276,104 +285,271 @@ embed{
   overflow-x: auto;
   /* scrollbar-color: transparent; */
 }
+
 #projectList::-webkit-scrollbar {
   width: 8px;
 }
+
 .DetailsContainer a {
   color: #fbff00d9;
   text-decoration: none;
   font-weight: bold;
   font-size: 15px;
 }
+
 .DetailsContainer a:hover {
   color: #f8cdda;
-  text-decoration:underline;
+  text-decoration: underline;
 
 }
+
 .alert-box {
-      display: none;
-      position: fixed;
-      top: 30%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: #8a8eda;
-      color: black;
-      padding: 20px 30px;
-      /* border: 2px solid #d8000c; */
-      border-radius: 0px;
-      box-shadow: 0px 5px 15px rgba(0,0,0,0.3);
-      z-index: 1000;
-      text-align: center;
-      min-width: 300px;
-    }
-    .alert-box button{
-       background-color: white;
-       color: black;
-       width: 7rem;
-    }
+  display: none;
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #8a8eda;
+  color: black;
+  padding: 20px 30px;
+  /* border: 2px solid #d8000c; */
+  border-radius: 0px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  text-align: center;
+  min-width: 300px;
+}
+
+.alert-box button {
+  background-color: white;
+  color: black;
+  width: 7rem;
+}
 
 
-    /* Popup overlay */
-    .popup-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
+/* Popup overlay */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
 
-    /* Popup box */
-    .popup {
-      /* border: 2px solid red; */
-      background: linear-gradient(to right, #ff7e5f, #feb47b);
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0px 4px 15px rgba(0,0,0,0.2);
-      width: 350px;
-      text-align: center;
-      animation: popIn 0.4s ease;
-    }
+/* Popup box */
+.popup {
+  border: 2px solid rgb(255, 255, 255);
+  background: linear-gradient(to right, #ff7e5f, #feb47b);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  width: 350px;
+  text-align: center;
+  animation: popIn 0.4s ease;
+}
 
-    .popup h2 {
+.popup h2 {
+  margin-bottom: 15px;
+}
+
+.popup input {
+  width: 90%;
+  padding: 8px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.popbtn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #4CAF50;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.popbtn:hover {
+  background: #45a049;
+}
+
+/* Animation */
+@keyframes popIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Hidden state */
+.hidden {
+  display: none;
+}
+
+.upload-btn {
+  padding: 12px 25px;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  background: #fff;
+  color: #2575fc;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.upload-btn:hover {
+  background: #2575fc;
+  color: #fff;
+}
+
+/* Overlay background */
+.overlay,
+.overlay2 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  /* hidden by default */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Profile Box */
+.profile-box {
+  width: 320px;
+  background: #fff;
+  border-radius: 15px;
+  text-align: center;
+  padding: 20px;
+  box-shadow: 0 8px 25px rgba(37, 12, 12, 0.3);
+  transform: scale(0.7);
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.profile-box2 {
+  color: black;
+  width: 520px;
+  height: 520px;
+  background: #fff;
+  border-radius: 15px;
+  text-align: top;
+  padding: 10px;
+  box-shadow: 0 8px 25px rgba(37, 12, 12, 0.3);
+  transform: scale(0.7);
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.profile-box2 h3 {
+  color: black;
+}
+
+/* Show animation */
+.profile-box.show {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.profile-box2.show {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.profile-box img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  object-fit: cover;
+  border: 4px solid #2575fc;
+}
+
+.profile-box h2 {
+  margin: 10px 0;
+  color: #333;
+}
+
+.close-btn {
+  margin-top: 15px;
+  padding: 8px 20px;
+  border: none;
+  background: #2575fc;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.close-btn2 {
+  position: absolute;
+  top: 0px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  color: rgb(0, 0, 0);
+  border-radius: 30px;
+  cursor: pointer;
+  transition: 0.3s;
+
+}
+
+.Projct-nav {
+  /* border: 2px solid purple; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  border-bottom: 2px solid #333;
+
+}
+
+.close-btn:hover,
+.close-btn2:hover {
+  background: #1e5fd4;
+}
+
+/* ----------------------for profile edit popup---------------------- */
+
+
+    /* Circular profile preview */
+    .profile-pic {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #ffffff;
       margin-bottom: 15px;
-    }
-
-    .popup input {
-      width: 90%;
-      padding: 8px;
-      margin: 8px 0;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-
-    .popbtn {
-      margin-top: 10px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      background: #4CAF50;
-      color: white;
-      font-size: 16px;
       cursor: pointer;
       transition: 0.3s;
     }
 
-    .popbtn:hover {
-      background: #45a049;
-    }
-    
-    /* Animation */
-    @keyframes popIn {
-      from { transform: scale(0.8); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+    .profile-pic:hover {
+      opacity: 0.8;
     }
 
-    /* Hidden state */
-    .hidden {
+
+    /* Hide file input */
+    #fileInput {
       display: none;
     }

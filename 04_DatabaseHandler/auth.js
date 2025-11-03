@@ -119,8 +119,6 @@ btnSignUp.addEventListener("click", async() => {
   }
 });
 
-
-
 // SIGN IN LOGIC
 
 btnSignIn.addEventListener( "click", async () => {
@@ -133,8 +131,9 @@ btnSignIn.addEventListener( "click", async () => {
     alert("Login Successfull")
     console.log("Logged in:" , userCredential.user)
 
-    // Redirecting to login page
-    formpage();
+    // Redirecting to Submit Page and removing the email & pwd
+    window.location.href = "01_html/submitPage.html"
+
   } catch(error){
     alert(error.message);
     }

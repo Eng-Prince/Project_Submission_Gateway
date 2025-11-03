@@ -2,6 +2,7 @@
 
 */
 
+// Defining Variable
 const fileInput = document.getElementById("fileInput");
 const previewBox = document.getElementById("previewBox");
 const filePreview = document.getElementById("filePreview");
@@ -62,9 +63,6 @@ function Register() {
   });
 
 }
-
-
-
 
 let storage = JSON.parse(localStorage.getItem('projects')) || [];
 

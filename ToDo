@@ -1,0 +1,4 @@
+In main html in input group set the email and pwd autocomplete to off so they cannot able to save input
+Add a user, and eye icon for email pwd and make the eye icon dynamic
+
+In submit page. html I commot out the popup page

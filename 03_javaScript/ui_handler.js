@@ -63,7 +63,7 @@ function loginPage(){
 }
 
 function NewWindow() {
-  window.location.href = "01_html/submit_Page.html";
+  window.location.href = "01_html/submitPage.html";
 }
 
 function formpage() {

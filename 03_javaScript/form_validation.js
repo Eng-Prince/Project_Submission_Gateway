@@ -86,7 +86,7 @@ DOM.btnSignIn.addEventListener("click", () =>{
       const isPwdValid = validatePwd();
 
       if(isEmailValid && isPwdValid) {
-        console.log("All Validation passed ready to sing in");
+        console.log("All Validation passed ready to sign in");
       }
 
 });
@@ -208,10 +208,10 @@ const pwd = DOM.signUpPwd.value.trim();
 
 DOM.btnSignUp.addEventListener("click", () =>{
     const enroll = validateSignUpEnroll();
-    const emila = validateSignUpEmail();
+    const email = validateSignUpEmail();
     const pwds  = validateSignUpPwd();
 
-    if(enroll && emila && pwds){
+    if(enroll && email && pwds){
       console.log("Verify for sign up ")
     }
 });

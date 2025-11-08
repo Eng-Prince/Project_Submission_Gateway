@@ -1,136 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-  <title>Login & Sign Up</title>
-  <link rel="stylesheet" href="/02_css/submit_style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Submission Portal</title>
+  <link rel="stylesheet" href="../02_css/submit_style.css">
 </head>
-
 <body>
   
-  <!--
-  I don't think we need it 
-  -->
+  <!-- Profile Creation/Edit Popup -->
   <div class="popup-overlay" id="popupOverlay">
     <div class="popup">
-      <h2>Create Profile</h2>
+      <h2>Complete Your Profile</h2>
 
-      <img id="preview" src=" " alt="Profile" class="profile-pic" onclick="profileclick()">
-      <input type="file" id="fileInput" accept="image/*">
+      <!-- Profile Picture Upload -->
+      <div class="profile-pic-container">
+        <img id="preview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect fill='%23ddd' width='120' height='120'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' fill='%23999' font-size='14' dy='.3em'%3EClick to Upload%3C/text%3E%3C/svg%3E" alt="Profile" class="profile-pic" onclick="document.getElementById('fileInput').click()">
+        <input type="file" id="fileInput" accept="image/*" style="display: none;">
+      </div>
 
-      <input type="text" id="name" placeholder="Enter Name">
-      <input type="email" id="email" placeholder="Enter Email">
-      <input type="number" id="enroll" placeholder="Enter Enrollment No">
-      <input type="text" id="Year" placeholder="Enter Year">
-      <button class="popbtn" onclick="saveProfile()">Save Profile</button>
+      <!-- Auto-filled fields from StudentEligibility (Read-only) -->
+      <div class="readonly-section">
+        <label>Name</label>
+        <input type="text" id="popup-name" placeholder="Loading..." readonly>
+        
+        <label>Email</label>
+        <input type="email" id="popup-email" placeholder="Loading..." readonly>
+        
+        <label>Mobile Number</label>
+        <input type="text" id="popup-mobile" placeholder="Loading..." readonly>
+        
+        <label>Enrollment Number</label>
+        <input type="text" id="popup-enrollment" placeholder="Loading..." readonly>
+      </div>
+
+      <div class="divider">
+        <span>Complete Your Profile Information</span>
+      </div>
+
+      <!-- Editable fields (for UserProfile) -->
+      <input type="search" placeholder="Branch" id="popup-branch" list="branchList" required>
+      <datalist id="branchList">
+        <option value="Computer Science and Engineering"></option>
+        <option value="Mechanical Engineering"></option>
+        <option value="Civil Engineering"></option>
+        <option value="Electrical Engineering"></option>
+        <option value="Electronics and Communication"></option>
+      </datalist>
+
+      <input type="search" placeholder="Department" id="popup-department" list="deptList" required>
+      <datalist id="deptList">
+        <option value="Department of Engineering"></option>
+        <option value="Department of Law"></option>
+        <option value="Department of Agriculture"></option>
+        <option value="Department of Nursing"></option>
+      </datalist>
+
+      <input type="text" placeholder="Semester (e.g., 5)" id="popup-semester" required>
+      <input type="text" placeholder="Year (e.g., 2023-2024)" id="popup-year" required>
+
+      <button class="popbtn" onclick="saveUserProfile()">Save Profile</button>
+      <p class="popup-note">* Name, Email, Mobile are auto-filled from your account</p>
     </div>
   </div> 
   
+  <!-- Navigation Bar -->
   <div class="navBar">
-    <img src="/images/pf.png" width="60px" onclick="openProfile()" alt="">
-      <img src="/images/pf.png" width="60px" onclick="projectDetails()" alt="">
-      <img src="/images/pf.png" width="60px" onclick="openProfile()" alt="">
-      <img src="/images/pf.png" width="60px" onclick="openProfile()" alt="">
-      <img src="/images/pf.png" width="60px" onclick="openProfile()" alt="">
-      <img src="/images/pf.png" width="60px" onclick="logout()" alt="">
-        <!-- <h3>Total Projects: <span id="projectCount">0</span></h3>
-           <button class="Project-view" onclick="showAllProjects()">My Project</button>   -->
-           <!-- <div id="projectList"></div> --> 
-          
-           <!-- Overlay with Profile -->
-           <div class="profile-section">
-            <div class="overlay" id="overlay">
-            <div class="profile-box" id="profileBox">
-              <img  id="profile-cr" src="" alt="Profile Photo">
-              <div id="nameShow"> </div>
-              <p id="EmailShow">Email:</p>
-              <h3 id="EnrollmentShow">  </h3>
-              <h3 id="YearShow">  </h3>
-              <button class="close-btn" onclick="closeProfile()">Close</button>
-            </div>
-          </div>
-
-            <div class="overlay2" id="overlay2">
-            <div class="profile-box2" id="profileBox2">
-              <div class="Projct-nav">
-                <h3>Project Overview </h3>
-                <button class="close-btn2" onclick="closeProjectD()">X</button>
-                
-              </div>
-              <p></p>
-            </div>
-          </div>
-          
-        </div>
-    </div>
-
-  <div class="MainContainer" id="blur_bg">
+    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='28' fill='%234CAF50'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' fill='white' font-size='20' dy='.3em'%3EP%3C/text%3E%3C/svg%3E" width="60px" onclick="openProfile()" alt="Profile" title="View Profile">
     
-    <div class="container" id="mainContainer">
-      <div class="form-container">
-        <form action="">
-          <div id="customAlert" class="alert-box">
-            <span id="alertMessage"></span><br>
-          </div>
-          <h2>Submit Project Here :</h2>
+    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='28' fill='%232196F3'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' fill='white' font-size='20' dy='.3em'%3EM%3C/text%3E%3C/svg%3E" width="60px" onclick="showMyProjects()" alt="Projects" title="My Projects">
+    
+    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='28' fill='%23FF9800'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' fill='white' font-size='20' dy='.3em'%3EE%3C/text%3E%3C/svg%3E" width="60px" onclick="editProfile()" alt="Edit" title="Edit Profile">
+    
+    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='28' fill='%23F44336'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' fill='white' font-size='20' dy='.3em'%3EL%3C/text%3E%3C/svg%3E" width="60px" onclick="logout()" alt="Logout" title="Logout">
+  </div>
 
-          <div class="input-group" id="inputGroup">
+  <!-- Profile View Overlay -->
+  <div class="overlay" id="overlay">
+    <div class="profile-box" id="profileBox">
+      <img id="profile-display" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect fill='%23ddd' width='120' height='120'/%3E%3C/svg%3E" alt="Profile Photo">
+      <h2 id="profile-name">Loading...</h2>
+      <p id="profile-email">Email: </p>
+      <p id="profile-mobile">Mobile: </p>
+      <p id="profile-enrollment">Enrollment: </p>
+      <p id="profile-branch">Branch: </p>
+      <p id="profile-department">Department: </p>
+      <p id="profile-semester">Semester: </p>
+      <p id="profile-year">Year: </p>
+      <button class="close-btn" onclick="closeProfile()">Close</button>
+    </div>
+  </div>
 
-            <input type="text" placeholder="First Name" id="FirstName" required>
-            <input type="text" placeholder="Midle Name" id="MidleName">
-            <input type="text" placeholder="Last Name" id="lastName" required>
-            <input type="text" placeholder="Enrollment Number" id="enrollment" required>
-            <input type="search" placeholder="Branch" id="branch" list="nameBr" required>
-            <datalist id="nameBr">
-              <option value="Computer Science and Engineering"></option>
-              <option value=""></option>
-              <option value="Department of low"></option>
-              <option value="Department of Agricultural"></option>
-              <option value="Department of Nursing"></option>
-              <option value="Computer Scicence"></option>
-            </datalist>
-            <input type="search" placeholder="Department" id="department" required list="nameDep">
-            <datalist id="nameDep">
-              <option value="Department of Engineering"></option>
-              <option value="Department of Civil "></option>
-              <option value="Department of low"></option>
-              <option value="Department of Agricultural"></option>
-              <option value="Department of Nursing"></option>
-              <option value="Computer Scicence"></option>
-            </datalist>
-            <input type="text" placeholder="Semester" id="semester" required>
-            <input type="text" placeholder="Mobile Number" id="mobileNumber" required>
-            <input type="date" placeholder="submit Date" id="date" required>
-
-            <div class="DiscContainer">
-              <input type="text" placeholder="Write Your Project title" id="Project-tittle" required>
-              <textarea placeholder="Describe your project here..." rows="6" cols="40"></textarea>
-              <input type="url" placeholder="Project URL" id="url" required>
-              <input type="file" id="fileInput" accept=".pdf" />
-              <h3>'Upload You Project File in pdf fomate'</h3>
-              <button class="Upload-btn" onclick="uploadFile()">Upload</button>
-
-
-
-              <div class="submit_btn">
-                <div id="previewBox">
-                  <h3>File Preview:</h3>
-                  <div id="filePreview"></div>
-                </div>
-              </div>
-              
-              <button type="submit" id="btnSignUp" onclick="showProjects()">Register</button>
-            </div>
-
-        </form>
-       <script src="/04_DatabaseHandler/submit.js"></script>
-
-        <button onclick="closeAlert()">OK</button>
+  <!-- My Projects Overlay -->
+  <div class="overlay" id="projectsOverlay">
+    <div class="projects-box">
+      <div class="projects-header">
+        <h2>My Submitted Projects</h2>
+        <button class="close-btn" onclick="closeMyProjects()">✕</button>
+      </div>
+      <div id="projectsList" class="projects-list">
+        <p class="loading-text">Loading projects...</p>
       </div>
     </div>
   </div>
 
-</body>
+  <!-- Main Container -->
+  <div class="MainContainer" id="blur_bg">
+    <div class="container" id="mainContainer">
+      <div class="form-container">
+        
+        <!-- Alert Box -->
+        <div id="customAlert" class="alert-box">
+          <span id="alertMessage"></span>
+          <button onclick="closeAlert()">OK</button>
+        </div>
 
+        <form id="projectForm" onsubmit="return false;">
+          <h2>Submit Your Project</h2>
+
+          <div class="input-group">
+            <!-- Auto-filled from profile -->
+            <input type="text" placeholder="Student Name" id="studentName" readonly>
+            <input type="text" placeholder="Enrollment Number" id="enrollmentNumber" readonly>
+            <input type="text" placeholder="Mobile Number" id="mobileNumber" readonly>
+            
+            <!-- Auto-filled but shown -->
+            <input type="text" placeholder="Branch" id="branch" readonly>
+            <input type="text" placeholder="Department" id="department" readonly>
+            <input type="text" placeholder="Semester" id="semester" readonly>
+
+            <!-- Project specific fields -->
+            <input type="text" placeholder="Project Title *" id="projectTitle" required>
+            
+            <textarea placeholder="Describe your project here... *" id="projectDescription" rows="6" required></textarea>
+            
+            <!-- GitHub Repository Link (REQUIRED) -->
+            <input type="url" placeholder="GitHub Repository Link * (e.g., https://github.com/username/project)" id="githubLink" required>
+            <p class="field-hint">📌 Required: Upload your code to GitHub and paste the repository link</p>
+            
+            <!-- Live Project Link (OPTIONAL) -->
+            <input type="url" placeholder="Live Project Link (Optional - deployed on Vercel, Netlify, etc.)" id="liveProjectLink">
+            <p class="field-hint">🚀 Optional: If deployed, paste the live demo URL</p>
+            
+            <!-- PDF Report Section - TWO OPTIONS -->
+            <div class="pdf-upload-section">
+              <h4>📄 Project Report PDF (Choose ONE option):</h4>
+              
+              <!-- OPTION 1: Upload PDF File -->
+              <div class="upload-option">
+                <label for="pdfFileInput" class="file-label">
+                  <strong>Option 1:</strong> Upload PDF from Device 
+                  <span style="color: #FF9800;">(Uses Firebase Storage - 5GB free)</span>
+                </label>
+                <input type="file" id="pdfFileInput" accept=".pdf" />
+                <div id="pdfPreview" class="pdf-preview"></div>
+                <p class="field-hint">⚠️ Max 10MB, PDF format only. Page count validation: Currently OFF</p>
+              </div>
+              
+              <div style="text-align: center; margin: 15px 0; color: rgba(255,255,255,0.7);">
+                <strong>--- OR ---</strong>
+              </div>
+              
+              <!-- OPTION 2: PDF Link -->
+              <div class="upload-option">
+                <label class="file-label">
+                  <strong>Option 2:</strong> Paste PDF Link 
+                  <span style="color: #4CAF50;">(100% FREE - No storage used!)</span>
+                </label>
+                <input type="url" placeholder="PDF Link (GitHub/Drive/Dropbox)" id="pdfLink">
+                <p class="field-hint">💡 Upload PDF to GitHub/Drive/Dropbox, then paste link here</p>
+              </div>
+            </div>
+            
+            <div class="pdf-help-section">
+              <h4>💡 FREE PDF Storage Options:</h4>
+              <ol>
+                <li><strong>GitHub (Best):</strong> Add report.pdf to your repo → Copy link → 100% FREE, unlimited!</li>
+                <li><strong>Google Drive:</strong> Upload → Share → "Anyone with link" → Copy link → 15GB FREE!</li>
+                <li><strong>Dropbox:</strong> Upload → Share → Copy link → 2GB FREE</li>
+                <li><strong>OneDrive:</strong> Microsoft account → Upload → Share link → 5GB FREE</li>
+                <li><strong>pCloud:</strong> Free account → Upload → Share → 10GB FREE forever!</li>
+              </ol>
+              <p style="margin-top: 10px; color: #f8cdda;">
+                <strong>💰 Cost Comparison:</strong><br>
+                Firebase Storage: 5GB free, then paid<br>
+                External Links: Unlimited PDFs, 100% FREE! ✅
+              </p>
+            </div>
+            
+            <input type="date" placeholder="Submission Date *" id="submissionDate" required>
+
+            <button type="button" class="submit-btn" onclick="submitProject()">Submit Project</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+   <!-- Load Firebase and Custom Scripts -->
+  <script type="module" src="../04_DatabaseHandler/firebaseConfig.js"></script>
+  <script type="module" src="../04_DatabaseHandler/profileManager.js"></script>
+  <script type="module" src="../04_DatabaseHandler/projectManager.js"></script>
+  <script src="03_javaScript/uiController.js"></script>
+
+
+</body>
 </html>
+
+
+ 

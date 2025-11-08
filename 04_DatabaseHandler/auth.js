@@ -53,7 +53,7 @@ btnSignUp.addEventListener("click", async() => {
       snapShot = await getDoc(readDoc);
 
       if (!snapShot.exists()) {
-        alert("Your Enrollment no. is not registerd as a student"); 
+        alert("Your Enrollment is not registerd as a student"); 
         return;
       }
 

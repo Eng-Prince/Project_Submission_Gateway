@@ -1,28 +1,23 @@
 /**
- * projectManager.js
+ * 04_DatabaseHandler/projectManager.js
  * 
- * NOW SUPPORTS: PDF file upload with page count validation
- * Uses Firebase Storage OR external links (GitHub/Drive)
+ * Handles project submission and viewing
  */
 
 import { 
     db, 
-    storage,
     collection,
     addDoc,
     query,
     where,
-    getDocs,
-    ref,
-    uploadBytes,
-    getDownloadURL
+    getDocs
 } from './firebaseConfig.js';
 
 import { getCurrentUserData } from './profileManager.js';
+import { uploadProjectPDF } from './cloudinaryUploader.js';
 
 /**
- * Submit a new project to Firebase
- * Supports BOTH: File upload AND URL links
+ * Submit a new project
  */
 window.submitProject = async function() {
     try {
@@ -31,13 +26,12 @@ window.submitProject = async function() {
         // Get current user data
         const userData = getCurrentUserData();
         
-        // Validate user is logged in and has profile
         if (!userData.enrollmentNumber) {
             alert("Please complete your profile before submitting a project!");
             return;
         }
         
-        // Get project form values
+        // Get form values
         const projectTitle = document.getElementById("projectTitle").value.trim();
         const projectDescription = document.getElementById("projectDescription").value.trim();
         const githubLink = document.getElementById("githubLink").value.trim();
@@ -52,13 +46,13 @@ window.submitProject = async function() {
             return;
         }
         
-        // Validate GitHub URL format
+        // Validate GitHub URL
         if (!isValidGitHubUrl(githubLink)) {
             alert("Please enter a valid GitHub repository URL!\n\nExample: https://github.com/username/project-name");
             return;
         }
         
-        // Check if user provided PDF (either file OR link)
+        // Check PDF
         const hasPdfFile = pdfFileInput && pdfFileInput.files[0];
         const hasPdfLink = pdfLinkInput && pdfLinkInput.length > 0;
         
@@ -67,7 +61,7 @@ window.submitProject = async function() {
             if (!confirmSubmit) return;
         }
         
-        // Show loading state
+        // Show loading
         showAlert("Submitting project... Please wait...", false);
         
         // Prepare project data
@@ -100,27 +94,38 @@ window.submitProject = async function() {
             reviewedAt: ""
         };
         
-        // Handle PDF: File upload OR URL
+        // Handle PDF upload
         if (hasPdfFile) {
-            console.log("📄 Uploading PDF file...");
+            console.log("📄 Uploading PDF to Cloudinary...");
+            
             try {
-                // Validate PDF before upload
-                const validationResult = await validatePDF(pdfFileInput.files[0]);
-                if (!validationResult.valid) {
-                    showAlert(validationResult.error, true);
-                    return;
+                const uploadResult = await uploadProjectPDF(
+                    pdfFileInput.files[0],
+                    userData.enrollmentNumber,
+                    projectTitle
+                );
+                
+                if (uploadResult.success) {
+                    projectData.pdfUrl = uploadResult.pdfUrl;
+                    projectData.pdfDownloadUrl = uploadResult.pdfDownloadUrl;
+                    projectData.pdfSize = uploadResult.pdfSize;
+                    projectData.pdfPages = uploadResult.pdfPages;
+                    projectData.pdfSource = "cloudinary";
+                    console.log("✅ PDF uploaded to Cloudinary!");
+                } else {
+                    throw new Error('Upload failed');
                 }
                 
-                // Upload to Firebase Storage
-                const pdfUrl = await uploadPDFToStorage(pdfFileInput.files[0], userData.enrollmentNumber, projectTitle);
-                projectData.pdfUrl = pdfUrl;
-                projectData.pdfSource = "uploaded"; // Track source
-                projectData.pdfPageCount = validationResult.pageCount;
-                console.log("✅ PDF uploaded successfully!");
             } catch (uploadError) {
                 console.error("⚠️ Error uploading PDF:", uploadError);
-                showAlert("PDF upload failed: " + uploadError.message + "\n\nSubmitting project without PDF.", true);
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                const continueWithout = confirm(
+                    "PDF upload failed: " + uploadError.message + 
+                    "\n\nDo you want to submit the project WITHOUT the PDF?"
+                );
+                if (!continueWithout) {
+                    showAlert("Submission cancelled.", true);
+                    return;
+                }
             }
         } else if (hasPdfLink) {
             // Validate URL
@@ -129,16 +134,16 @@ window.submitProject = async function() {
                 return;
             }
             projectData.pdfUrl = pdfLinkInput;
-            projectData.pdfSource = "link"; // Track source
+            projectData.pdfSource = "link";
         }
         
-        // Save project to Firestore
+        // Save to Firestore
         const projectsRef = collection(db, "Projects");
         const docRef = await addDoc(projectsRef, projectData);
         
         console.log("✅ Project submitted successfully with ID:", docRef.id);
         
-        // Also save to localStorage for offline view
+        // Save to localStorage for offline view
         let localProjects = JSON.parse(localStorage.getItem('projects')) || [];
         localProjects.push({ ...projectData, id: docRef.id });
         localStorage.setItem('projects', JSON.stringify(localProjects));
@@ -146,7 +151,7 @@ window.submitProject = async function() {
         // Clear form
         clearProjectForm();
         
-        // Show success message
+        // Show success
         showAlert("✅ Project submitted successfully!\n\nYour project has been sent for review.", true);
         
     } catch (error) {
@@ -156,99 +161,7 @@ window.submitProject = async function() {
 }
 
 /**
- * Validate PDF file
- * Checks: file type, size, page count (commented out for now)
- * @param {File} file - PDF file to validate
- * @returns {Promise<Object>} Validation result
- */
-async function validatePDF(file) {
-    try {
-        // Check file type
-        if (file.type !== 'application/pdf') {
-            return { valid: false, error: "❌ Only PDF files are allowed!" };
-        }
-        
-        // Check file size (max 10MB)
-        const maxSize = 10 * 1024 * 1024; // 10MB
-        if (file.size > maxSize) {
-            const sizeMB = (file.size / 1024 / 1024).toFixed(2);
-            return { 
-                valid: false, 
-                error: `❌ PDF file too large!\n\nYour file: ${sizeMB}MB\nMaximum: 10MB\n\nPlease compress your PDF or use a link instead.` 
-            };
-        }
-        
-        // PAGE COUNT VALIDATION (COMMENTED OUT FOR NOW)
-        /*
-        // Read PDF to count pages
-        const arrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-        const pageCount = pdf.numPages;
-        
-        console.log(`📄 PDF has ${pageCount} pages`);
-        
-        // Check minimum page count (50 pages)
-        if (pageCount < 50) {
-            return { 
-                valid: false, 
-                error: `❌ PDF must have at least 50 pages!\n\nYour PDF: ${pageCount} pages\nRequired: 50+ pages`,
-                pageCount: pageCount
-            };
-        }
-        */
-        
-        // For now, just return valid without page check
-        return { 
-            valid: true, 
-            pageCount: "Not checked" // Will show as "Not checked" until validation is enabled
-        };
-        
-    } catch (error) {
-        console.error("Error validating PDF:", error);
-        return { 
-            valid: false, 
-            error: "❌ Could not validate PDF file. Please try again or use a URL link instead." 
-        };
-    }
-}
-
-/**
- * Upload PDF to Firebase Storage
- * @param {File} file - PDF file to upload
- * @param {string} enrollmentNumber - Student's enrollment number
- * @param {string} projectTitle - Project title for filename
- * @returns {Promise<string>} Download URL of uploaded PDF
- */
-async function uploadPDFToStorage(file, enrollmentNumber, projectTitle) {
-    try {
-        // Create unique filename
-        const timestamp = Date.now();
-        const sanitizedTitle = projectTitle.replace(/[^a-z0-9]/gi, '_').substring(0, 50);
-        const fileName = `${enrollmentNumber}_${sanitizedTitle}_${timestamp}.pdf`;
-        
-        // Create storage reference
-        // Path: projectReports/enrollmentNumber/filename.pdf
-        const storageRef = ref(storage, `projectReports/${enrollmentNumber}/${fileName}`);
-        
-        // Upload file
-        console.log("⬆️ Uploading to Firebase Storage...");
-        await uploadBytes(storageRef, file);
-        console.log("✅ PDF uploaded to storage");
-        
-        // Get download URL
-        const downloadURL = await getDownloadURL(storageRef);
-        console.log("✅ PDF download URL obtained");
-        
-        return downloadURL;
-        
-    } catch (error) {
-        console.error("❌ Error uploading PDF:", error);
-        throw new Error("PDF upload failed: " + error.message);
-    }
-}
-
-/**
- * Validate GitHub URL format
+ * Validate GitHub URL
  */
 function isValidGitHubUrl(url) {
     const githubPattern = /^https?:\/\/(www\.)?github\.com\/[\w-]+\/[\w.-]+\/?$/;
@@ -256,7 +169,7 @@ function isValidGitHubUrl(url) {
 }
 
 /**
- * Validate general URL format
+ * Validate URL
  */
 function isValidUrl(url) {
     try {
@@ -268,7 +181,7 @@ function isValidUrl(url) {
 }
 
 /**
- * Load and display user's submitted projects
+ * Show My Projects
  */
 window.showMyProjects = async function() {
     try {
@@ -319,7 +232,7 @@ window.showMyProjects = async function() {
 }
 
 /**
- * Create HTML card for a project
+ * Create project card HTML
  */
 function createProjectCard(project, index, docId) {
     const submittedDate = new Date(project.submittedAt).toLocaleDateString('en-IN', {
@@ -339,14 +252,6 @@ function createProjectCard(project, index, docId) {
     
     const status = statusConfig[project.status] || statusConfig['submitted'];
     
-    // Show PDF source (uploaded or link)
-    let pdfBadge = '';
-    if (project.pdfSource === 'uploaded') {
-        pdfBadge = '<span style="background: #4CAF50; color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px;">📤 Uploaded</span>';
-    } else if (project.pdfSource === 'link') {
-        pdfBadge = '<span style="background: #2196F3; color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px;">🔗 Linked</span>';
-    }
-    
     return `
         <div class="project-card" data-id="${docId}">
             <div class="project-header">
@@ -365,7 +270,6 @@ function createProjectCard(project, index, docId) {
                     <p><strong>📖 Semester:</strong> ${project.semester}</p>
                     <p><strong>📅 Submission Date:</strong> ${project.submissionDate}</p>
                     <p><strong>🕒 Submitted At:</strong> ${submittedDate}</p>
-                    ${project.pdfPageCount ? `<p><strong>📄 PDF Pages:</strong> ${project.pdfPageCount}</p>` : ''}
                 </div>
                 
                 <div class="project-links">
@@ -378,7 +282,7 @@ function createProjectCard(project, index, docId) {
                         </a>` : ''}
                     ${project.pdfUrl ? 
                         `<a href="${project.pdfUrl}" target="_blank" class="btn-link btn-pdf">
-                            📄 View Report ${pdfBadge}
+                            📄 View Report
                         </a>` : ''}
                 </div>
                 
@@ -396,7 +300,7 @@ function createProjectCard(project, index, docId) {
 }
 
 /**
- * Close my projects overlay
+ * Close projects overlay
  */
 window.closeMyProjects = function() {
     document.getElementById("projectsOverlay").style.display = "none";
@@ -410,13 +314,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const pdfPreview = document.getElementById("pdfPreview");
     
     if (pdfInput && pdfPreview) {
-        pdfInput.addEventListener("change", async function() {
+        pdfInput.addEventListener("change", function() {
             const file = this.files[0];
             if (file) {
                 if (file.type === 'application/pdf') {
                     const fileSize = (file.size / 1024 / 1024).toFixed(2);
-                    
-                    // Show file info
                     pdfPreview.innerHTML = `
                         <div class="pdf-info">
                             <span class="pdf-icon">📄</span>
@@ -428,19 +330,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             <button type="button" class="pdf-remove" onclick="removePDF()">✕</button>
                         </div>
                     `;
-                    
-                    // Validate PDF
-                    const validation = await validatePDF(file);
-                    const statusElement = pdfPreview.querySelector('.pdf-status');
-                    if (statusElement) {
-                        if (validation.valid) {
-                            statusElement.textContent = "✅ Valid PDF";
-                            statusElement.style.color = "#4CAF50";
-                        } else {
-                            statusElement.textContent = "⚠️ " + validation.error;
-                            statusElement.style.color = "#F44336";
-                        }
-                    }
                 } else {
                     alert("Please select a PDF file!");
                     this.value = "";
@@ -451,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * Remove selected PDF file
+ * Remove PDF
  */
 window.removePDF = function() {
     document.getElementById("pdfFileInput").value = "";
@@ -459,7 +348,7 @@ window.removePDF = function() {
 }
 
 /**
- * Clear project submission form
+ * Clear form
  */
 function clearProjectForm() {
     document.getElementById("projectTitle").value = "";
@@ -476,7 +365,7 @@ function clearProjectForm() {
 }
 
 /**
- * Show alert message
+ * Show alert
  */
 function showAlert(message, showButton = true) {
     const alertBox = document.getElementById("customAlert");

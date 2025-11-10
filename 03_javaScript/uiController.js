@@ -1,23 +1,16 @@
 /**
- * uiController.js
+ * 03_javaScript/uiController.js
  * 
- * Handles all UI interactions and animations:
- * - Opening/closing overlays
- * - Navigation controls
- * - Alert messages
- * - Profile display
- * 
- * NOTE: This file does NOT use ES6 modules - it's loaded as a regular script
+ * Handles UI interactions (non-module script)
+ * Profile display, alerts, navigation
  */
 
 /**
- * Open profile view overlay
- * Displays user's complete profile information
+ * Open profile view
  */
 window.openProfile = async function() {
     console.log("👤 Opening profile view...");
     
-    // Get profile data from localStorage (set by profileManager.js)
     const profileData = getCurrentUserDataFromStorage();
     
     if (!profileData || !profileData.enrollmentNumber) {
@@ -25,7 +18,7 @@ window.openProfile = async function() {
         return;
     }
     
-    // Fill profile display fields
+    // Fill profile display
     document.getElementById("profile-name").textContent = profileData.name || "N/A";
     document.getElementById("profile-email").textContent = "Email: " + (profileData.email || "N/A");
     document.getElementById("profile-mobile").textContent = "Mobile: " + (profileData.mobile || "N/A");
@@ -40,7 +33,7 @@ window.openProfile = async function() {
         document.getElementById("profile-display").src = profileData.profilePicture;
     }
     
-    // Show overlay with animation
+    // Show overlay
     const overlay = document.getElementById("overlay");
     const profileBox = document.getElementById("profileBox");
     
@@ -51,7 +44,7 @@ window.openProfile = async function() {
 }
 
 /**
- * Close profile view overlay
+ * Close profile view
  */
 window.closeProfile = function() {
     const overlay = document.getElementById("overlay");
@@ -64,8 +57,7 @@ window.closeProfile = function() {
 }
 
 /**
- * Show alert message
- * @param {string} message - Message to display
+ * Show alert
  */
 window.showAlert = function(message) {
     const alertBox = document.getElementById("customAlert");
@@ -81,38 +73,32 @@ window.showAlert = function(message) {
 }
 
 /**
- * Close alert message
+ * Close alert
  */
 window.closeAlert = function() {
     const alertBox = document.getElementById("customAlert");
     if (alertBox) {
         alertBox.style.display = "none";
     }
-    console.log("Alert closed");
 }
 
 /**
- * Logout user and redirect to login page
+ * Logout
  */
 window.logout = async function() {
     const confirmLogout = confirm("Are you sure you want to logout?");
     
     if (confirmLogout) {
         try {
-            // Import auth dynamically
-            const { auth } = await import('./firebaseConfig.js');
+            // Dynamically import auth
+            const { auth } = await import('../04_DatabaseHandler/firebaseConfig.js');
             const { signOut } = await import('https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js');
             
-            // Sign out from Firebase
             await signOut(auth);
-            
-            // Clear local storage
             localStorage.clear();
             
-            console.log("✅ User logged out successfully");
-            
-            // Redirect to login page
-            window.location.href = "login.html";
+            console.log("✅ User logged out");
+            window.location.href = "../Main_index.html";
             
         } catch (error) {
             console.error("❌ Error logging out:", error);
@@ -122,18 +108,14 @@ window.logout = async function() {
 }
 
 /**
- * Get current user data from localStorage
- * This is a fallback for non-module scripts
- * @returns {Object|null} User data or null
+ * Get user data from storage
  */
 function getCurrentUserDataFromStorage() {
     try {
-        // First try to get from window object (set by profileManager)
         if (window.currentUserData) {
             return window.currentUserData;
         }
         
-        // Fallback to localStorage
         const stored = localStorage.getItem("currentUserProfile");
         if (stored) {
             return JSON.parse(stored);
@@ -141,48 +123,45 @@ function getCurrentUserDataFromStorage() {
         
         return null;
     } catch (error) {
-        console.error("Error getting user data from storage:", error);
+        console.error("Error getting user data:", error);
         return null;
     }
 }
 
 /**
- * Set submission date to today by default
+ * Set submission date to today
  */
 window.addEventListener('DOMContentLoaded', () => {
     const dateInput = document.getElementById("submissionDate");
     if (dateInput) {
         const today = new Date().toISOString().split('T')[0];
         dateInput.value = today;
-        dateInput.setAttribute('max', today); // Prevent future dates
+        dateInput.setAttribute('max', today);
     }
 });
 
 /**
- * Smooth scroll to top when page loads
+ * Scroll to top on load
  */
 window.addEventListener('load', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 /**
- * Handle escape key to close overlays
+ * Handle escape key
  */
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-        // Close profile overlay
         const profileOverlay = document.getElementById("overlay");
         if (profileOverlay && profileOverlay.style.display === "flex") {
             closeProfile();
         }
         
-        // Close projects overlay
         const projectsOverlay = document.getElementById("projectsOverlay");
         if (projectsOverlay && projectsOverlay.style.display === "flex") {
             closeMyProjects();
         }
         
-        // Close alert
         const alertBox = document.getElementById("customAlert");
         if (alertBox && alertBox.style.display === "block") {
             closeAlert();
@@ -191,7 +170,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 /**
- * Prevent form submission on Enter key (except in textarea)
+ * Prevent form submission on Enter
  */
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById("projectForm");
@@ -201,22 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
             }
         });
-    }
-});
-
-/**
- * Add loading animation to buttons when clicked
- */
-document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('submit-btn') || e.target.classList.contains('popbtn')) {
-        e.target.classList.add('loading');
-        e.target.disabled = true;
-        
-        // Remove loading state after 5 seconds (in case of error)
-        setTimeout(() => {
-            e.target.classList.remove('loading');
-            e.target.disabled = false;
-        }, 5000);
     }
 });
 

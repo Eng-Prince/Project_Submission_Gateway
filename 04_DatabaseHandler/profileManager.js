@@ -1,44 +1,40 @@
 /**
- * profileManager.js
- * 
- * Handles all profile-related operations:
- * - Loading user data from StudentEligibility collection
- * - Creating/updating UserProfile collection
- * - Uploading and managing profile pictures
- * - Auto-filling form fields
+ * 04_DatabaseHandler/profileManager.js
+ * FIXED: Data loads and displays immediately
  */
 
-import { 
-    auth, 
-    db, 
-    storage,
+import {
+    auth,
+    db,
     onAuthStateChanged,
-    doc, 
-    getDoc, 
-    setDoc, 
+    doc,
+    getDoc,
+    setDoc,
     updateDoc,
     collection,
     query,
     where,
-    getDocs,
-    ref,
-    uploadBytes,
-    getDownloadURL
+    getDocs
 } from './firebaseConfig.js';
 
-// Store current user data globally for easy access
+import { uploadProfilePicture } from './cloudinaryUploader.js';
+
+// Store current user data globally
 let currentUserData = {
     uid: null,
     enrollmentNumber: null,
     name: null,
     email: null,
     mobile: null,
-    profilePicture: null
+    profilePicture: null,
+    branch: null,
+    department: null,
+    semester: null,
+    year: null
 };
 
 /**
  * Initialize profile manager on page load
- * Checks if user is logged in and loads their profile
  */
 window.addEventListener('DOMContentLoaded', async () => {
     console.log("🚀 Profile Manager initialized");
@@ -46,49 +42,101 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Listen for authentication state changes
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            console.log("✅ User logged in with UID:", user.uid);
+            console.log("✅ User logged in");
+            console.log("UID:", user.uid);
+            console.log("Email:", user.email);
+            
             currentUserData.uid = user.uid;
             
-            // Check if user is a teacher or student
+            // CRITICAL: Check if user is a teacher FIRST
+            console.log("🔍 Checking user role...");
             const isTeacher = await checkIfTeacher(user.uid);
             
             if (isTeacher) {
-                console.log("👨‍🏫 User is a teacher, redirecting to teacher dashboard...");
-                window.location.href = "teacherDashboard.html";
+                console.log("👨‍🏫 User is a teacher - Redirecting to dashboard");
+                
+                const mainContainer = document.getElementById("mainContainer");
+                if (mainContainer) {
+                    mainContainer.innerHTML = `
+                        <div style="text-align: center; padding: 50px; color: white;">
+                            <h2>👨‍🏫 Teacher Account Detected</h2>
+                            <p>Redirecting to Teacher Dashboard...</p>
+                        </div>
+                    `;
+                }
+                
+                setTimeout(() => {
+                    window.location.href = "teacherDashboard.html";
+                }, 1500);
                 return;
             }
             
-            // User is a student, load profile
+            console.log("👨‍🎓 User is a student - Loading profile");
+            
+            // Load student profile
             await loadUserProfile(user.uid);
+            
         } else {
-            console.log("❌ No user logged in, redirecting to login...");
-            // Uncomment to redirect to login page
-            // window.location.href = "login.html";
+            console.log("❌ No user logged in - Redirecting to login");
+            
+            const mainContainer = document.getElementById("mainContainer");
+            if (mainContainer) {
+                mainContainer.innerHTML = `
+                    <div style="text-align: center; padding: 50px; color: white;">
+                        <h2>🔒 Login Required</h2>
+                        <p>Redirecting to login page...</p>
+                    </div>
+                `;
+            }
+            
+            setTimeout(() => {
+                window.location.href = "../Main_index.html";
+            }, 2000);
         }
     });
 });
 
 /**
  * Check if user is a teacher
- * @param {string} uid - User's UID
- * @returns {Promise<boolean>} True if user is teacher
  */
 async function checkIfTeacher(uid) {
     try {
-        // Check TeacherEligibility collection
+        console.log("Checking TeacherEligibility for UID:", uid);
+        
+        // METHOD 1: Query by UID field
         const teacherRef = collection(db, "TeacherEligibility");
         const q = query(teacherRef, where("uid", "==", uid));
         const querySnapshot = await getDocs(q);
         
         if (!querySnapshot.empty) {
+            console.log("✅ Teacher found (query method)");
             return true;
         }
         
-        // Also check direct document access
+        // METHOD 2: Direct document access
         const directDocRef = doc(db, "TeacherEligibility", uid);
         const docSnap = await getDoc(directDocRef);
         
-        return docSnap.exists();
+        if (docSnap.exists()) {
+            console.log("✅ Teacher found (direct method)");
+            return true;
+        }
+        
+        // METHOD 3: Check by email
+        const userEmail = auth.currentUser?.email;
+        if (userEmail) {
+            const emailQuery = query(teacherRef, where("email", "==", userEmail));
+            const emailSnapshot = await getDocs(emailQuery);
+            
+            if (!emailSnapshot.empty) {
+                console.log("✅ Teacher found (email method)");
+                return true;
+            }
+        }
+        
+        console.log("Not a teacher");
+        return false;
+        
     } catch (error) {
         console.error("Error checking teacher status:", error);
         return false;
@@ -96,104 +144,228 @@ async function checkIfTeacher(uid) {
 }
 
 /**
- * Load user profile from both StudentEligibility and UserProfile collections
- * @param {string} uid - User's Firebase UID
+ * Load user profile - FIXED VERSION
  */
 async function loadUserProfile(uid) {
     try {
-        console.log("📥 Loading user profile for UID:", uid);
-        
-        // Step 1: Find the StudentEligibility document using UID
-        // Since your document ID might be different, we'll query by uid field
-        const studentEligibilityRef = collection(db, "StudentEligibility");
-        const q = query(studentEligibilityRef, where("uid", "==", uid));
-        const querySnapshot = await getDocs(q);
+        console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        console.log("📥 Loading student profile for UID:", uid);
+        console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         
         let eligibilityData = null;
         let eligibilityDocId = null;
+        let foundMethod = null;
         
-        if (!querySnapshot.empty) {
-            // Found the document
-            querySnapshot.forEach((doc) => {
-                eligibilityData = doc.data();
-                eligibilityDocId = doc.id;
-            });
-            console.log("✅ StudentEligibility data loaded:", eligibilityData);
-        } else {
-            // Try direct document access with UID as document ID
-            const directDocRef = doc(db, "StudentEligibility", uid);
-            const directDocSnap = await getDoc(directDocRef);
+        const studentEligibilityRef = collection(db, "StudentEligibility");
+        
+        // METHOD 1: Query by UID field
+        console.log("🔍 Method 1: Searching by UID field...");
+        try {
+            const q = query(studentEligibilityRef, where("uid", "==", uid));
+            const querySnapshot = await getDocs(q);
             
-            if (directDocSnap.exists()) {
-                eligibilityData = directDocSnap.data();
-                eligibilityDocId = uid;
-                console.log("✅ StudentEligibility data loaded (direct):", eligibilityData);
+            console.log(`   Query returned ${querySnapshot.size} document(s)`);
+            
+            if (!querySnapshot.empty) {
+                querySnapshot.forEach((docSnapshot) => {
+                    eligibilityData = docSnapshot.data();
+                    eligibilityDocId = docSnapshot.id;
+                    foundMethod = "UID Query";
+                    console.log(`   ✅ Found! Document ID: ${docSnapshot.id}`);
+                });
+            }
+        } catch (err) {
+            console.error("   Error in Method 1:", err.message);
+        }
+        
+        // METHOD 2: Direct access (UID as document ID)
+        if (!eligibilityData) {
+            console.log("🔍 Method 2: Direct access (UID as Doc ID)...");
+            try {
+                const directDocRef = doc(db, "StudentEligibility", uid);
+                const directDocSnap = await getDoc(directDocRef);
+                
+                if (directDocSnap.exists()) {
+                    eligibilityData = directDocSnap.data();
+                    eligibilityDocId = uid;
+                    foundMethod = "Direct UID Access";
+                    console.log("   ✅ Found via direct access!");
+                } else {
+                    console.log("   ❌ No document at StudentEligibility/" + uid);
+                }
+            } catch (err) {
+                console.error("   Error in Method 2:", err.message);
             }
         }
         
+        // METHOD 3: Search by email
         if (!eligibilityData) {
-            console.error("❌ Student eligibility data not found for UID:", uid);
-            alert("Your account data is incomplete. Please contact administrator.");
+            const userEmail = auth.currentUser?.email;
+            console.log(`🔍 Method 3: Searching by email: ${userEmail}...`);
+            
+            if (userEmail) {
+                try {
+                    const emailQuery = query(studentEligibilityRef, where("email", "==", userEmail));
+                    const emailSnapshot = await getDocs(emailQuery);
+                    
+                    console.log(`   Email query returned ${emailSnapshot.size} document(s)`);
+                    
+                    if (!emailSnapshot.empty) {
+                        emailSnapshot.forEach((docSnapshot) => {
+                            eligibilityData = docSnapshot.data();
+                            eligibilityDocId = docSnapshot.id;
+                            foundMethod = "Email Query";
+                            console.log(`   ✅ Found! Document ID: ${docSnapshot.id}`);
+                        });
+                    }
+                } catch (err) {
+                    console.error("   Error in Method 3:", err.message);
+                }
+            }
+        }
+        
+        // METHOD 4: Get all documents and search manually
+        if (!eligibilityData) {
+            console.log("🔍 Method 4: Manual search through all documents...");
+            
+            try {
+                const allDocsSnapshot = await getDocs(studentEligibilityRef);
+                console.log(`   Total documents in collection: ${allDocsSnapshot.size}`);
+                
+                if (allDocsSnapshot.size === 0) {
+                    console.error("   ⚠️ StudentEligibility collection is EMPTY!");
+                } else {
+                    allDocsSnapshot.forEach((docSnapshot) => {
+                        const data = docSnapshot.data();
+                        
+                        if (data.uid === uid || data.email === auth.currentUser?.email) {
+                            eligibilityData = data;
+                            eligibilityDocId = docSnapshot.id;
+                            foundMethod = "Manual Search";
+                            console.log(`   ✅ Found! Document ID: ${docSnapshot.id}`);
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error("   Error in Method 4:", err.message);
+            }
+        }
+        
+        // CHECK IF DATA WAS FOUND
+        console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        
+        if (!eligibilityData) {
+            console.error("❌ STUDENT DATA NOT FOUND");
+            console.error("Searched for:");
+            console.error("  UID:", uid);
+            console.error("  Email:", auth.currentUser?.email);
+            console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            
+            alert(
+                '⚠️ Profile Not Found!\n\n' +
+                'Your account is not registered in the system.\n\n' +
+                'Details:\n' +
+                '━━━━━━━━━━━━━━━━━━━━━\n' +
+                'UID: ' + uid + '\n' +
+                'Email: ' + (auth.currentUser?.email || 'N/A') + '\n\n' +
+                'ACTION REQUIRED:\n' +
+                '1. Open Firebase Console\n' +
+                '2. Go to Firestore Database\n' +
+                '3. Open StudentEligibility collection\n' +
+                '4. Add a document with:\n' +
+                '   - uid: ' + uid + '\n' +
+                '   - email: ' + auth.currentUser?.email + '\n' +
+                '   - name: Your Name\n' +
+                '   - mobile: Your Mobile\n' +
+                '   - enrollmentNumber: Your Number\n\n' +
+                'Or contact your administrator.'
+            );
             return;
         }
         
-        // Store basic user data
+        console.log(`✅ SUCCESS! Data found via: ${foundMethod}`);
+        console.log("Data:", eligibilityData);
+        console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        
+        // EXTRACT AND STORE USER DATA
+        currentUserData.uid = uid;
         currentUserData.enrollmentNumber = eligibilityData.enrollmentNumber || eligibilityDocId;
         currentUserData.name = eligibilityData.name || "";
-        currentUserData.email = eligibilityData.email || "";
+        currentUserData.email = eligibilityData.email || auth.currentUser?.email || "";
         currentUserData.mobile = eligibilityData.mobile || "";
         currentUserData.profilePicture = eligibilityData.profilePicture || null;
         
-        console.log("📋 Current User Data:", currentUserData);
+        console.log("📋 Extracted user data:");
+        console.log("   Name:", currentUserData.name);
+        console.log("   Email:", currentUserData.email);
+        console.log("   Mobile:", currentUserData.mobile);
+        console.log("   Enrollment:", currentUserData.enrollmentNumber);
         
-        // Step 2: Check if UserProfile exists with enrollment number as document ID
+        // CHECK IF USER PROFILE EXISTS
+        console.log("🔍 Checking UserProfile collection...");
         const userProfileRef = doc(db, "UserProfile", currentUserData.enrollmentNumber);
         const userProfileSnap = await getDoc(userProfileRef);
         
         if (userProfileSnap.exists()) {
-            // User profile exists - load and display it
             const profileData = userProfileSnap.data();
-            console.log("✅ UserProfile data loaded:", profileData);
+            console.log("✅ UserProfile exists - Loading data");
             
-            // Merge profile data with eligibility data
+            // Merge profile data
             currentUserData = { ...currentUserData, ...profileData };
             
-            // Fill all form fields
+            // CRITICAL FIX: Fill form fields IMMEDIATELY
+            console.log("📝 Filling form fields with complete data...");
             fillFormFields(currentUserData);
             
-            // Hide popup since profile is complete
+            // Also fill popup fields (for when user clicks profile/edit)
+            fillPopupFields(currentUserData);
+            
+            // Hide popup (profile is complete)
             hideProfilePopup();
             
+            console.log("✅ Form fields should now be visible!");
+            
         } else {
-            // User profile doesn't exist - create it and show popup
-            console.log("⚠️ UserProfile not found, creating initial profile...");
+            console.log("⚠️ UserProfile not found - Creating new profile");
             await createInitialUserProfile();
+            
+            // Fill popup with existing data (name, email, mobile)
+            fillPopupFields(currentUserData);
+            
+            // Show popup to complete profile
             showProfilePopup();
         }
         
-        // Store in window for uiController access
+        // STORE GLOBALLY
         window.currentUserData = currentUserData;
-        
-        // Also store in localStorage as backup
         localStorage.setItem("currentUserProfile", JSON.stringify(currentUserData));
         
+        console.log("✅ Profile loading complete!");
+        console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        
     } catch (error) {
-        console.error("❌ Error loading user profile:", error);
-        alert("Failed to load profile: " + error.message);
+        console.error("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        console.error("❌ FATAL ERROR loading profile:");
+        console.error(error);
+        console.error("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        
+        alert(
+            'Failed to load profile!\n\n' +
+            'Error: ' + error.message + '\n\n' +
+            'Please check browser console (F12) for details.'
+        );
     }
 }
 
 /**
- * Create initial UserProfile document with basic info from StudentEligibility
- * This happens automatically when user logs in for the first time
+ * Create initial UserProfile document
  */
 async function createInitialUserProfile() {
     try {
-        console.log("🆕 Creating initial UserProfile for:", currentUserData.enrollmentNumber);
+        console.log("Creating initial UserProfile for:", currentUserData.enrollmentNumber);
         
         const userProfileRef = doc(db, "UserProfile", currentUserData.enrollmentNumber);
         
-        // Create basic profile with user info from StudentEligibility
         const initialProfile = {
             uid: currentUserData.uid,
             enrollmentNumber: currentUserData.enrollmentNumber,
@@ -204,19 +376,15 @@ async function createInitialUserProfile() {
             department: "",
             semester: "",
             year: "",
+            profilePicture: currentUserData.profilePicture || "",
             createdAt: new Date().toISOString(),
             lastUpdated: new Date().toISOString()
         };
         
-        // Save to Firestore
         await setDoc(userProfileRef, initialProfile);
-        console.log("✅ Initial UserProfile created successfully!");
+        console.log("✅ Initial UserProfile created successfully");
         
-        // Update current user data
         currentUserData = { ...currentUserData, ...initialProfile };
-        
-        // Fill popup fields with existing data (name, email, mobile readonly)
-        fillPopupFields(currentUserData);
         
     } catch (error) {
         console.error("❌ Error creating initial profile:", error);
@@ -225,32 +393,27 @@ async function createInitialUserProfile() {
 }
 
 /**
- * Save/Update user profile with additional information
- * Called when user clicks "Save Profile" button in popup
+ * Save/Update user profile
  */
 window.saveUserProfile = async function() {
     try {
         console.log("💾 Saving user profile...");
         
-        // Get values from popup form
         const branch = document.getElementById("popup-branch").value.trim();
         const department = document.getElementById("popup-department").value.trim();
         const semester = document.getElementById("popup-semester").value.trim();
         const year = document.getElementById("popup-year").value.trim();
         
-        // Validate required fields
         if (!branch || !department || !semester || !year) {
-            alert("Please fill all required fields (Branch, Department, Semester, Year)!");
+            alert("⚠️ Please fill all required fields:\n\n- Branch\n- Department\n- Semester\n- Year");
             return;
         }
         
-        // Show loading state
         const saveButton = document.querySelector(".popbtn");
         const originalText = saveButton.textContent;
         saveButton.textContent = "Saving...";
         saveButton.disabled = true;
         
-        // Prepare profile data
         const profileData = {
             uid: currentUserData.uid,
             enrollmentNumber: currentUserData.enrollmentNumber,
@@ -264,44 +427,51 @@ window.saveUserProfile = async function() {
             lastUpdated: new Date().toISOString()
         };
         
-        // Handle profile picture upload if selected
+        // Handle profile picture upload
         const fileInput = document.getElementById("fileInput");
         if (fileInput.files[0]) {
-            console.log("📸 Uploading profile picture...");
+            console.log("📸 Uploading profile picture to Cloudinary...");
+            
             try {
-                const profilePictureUrl = await uploadProfilePicture(fileInput.files[0]);
-                profileData.profilePicture = profilePictureUrl;
-                currentUserData.profilePicture = profilePictureUrl;
+                const uploadResult = await uploadProfilePicture(
+                    fileInput.files[0],
+                    currentUserData.enrollmentNumber
+                );
                 
-                // Also update profile picture in StudentEligibility
-                await updateStudentEligibilityPhoto(profilePictureUrl);
-                console.log("✅ Profile picture uploaded and saved!");
+                if (uploadResult.success) {
+                    profileData.profilePicture = uploadResult.profilePictureUrl;
+                    currentUserData.profilePicture = uploadResult.profilePictureUrl;
+                    await updateStudentEligibilityPhoto(uploadResult.profilePictureUrl);
+                    console.log("✅ Profile picture uploaded successfully");
+                }
             } catch (uploadError) {
-                console.error("⚠️ Error uploading picture:", uploadError);
-                alert("Profile picture upload failed, but other data will be saved.");
+                console.error("⚠️ Profile picture upload failed:", uploadError);
+                const continueAnyway = confirm(
+                    "Profile picture upload failed:\n" + uploadError.message + 
+                    "\n\nDo you want to save other profile data anyway?"
+                );
+                if (!continueAnyway) {
+                    saveButton.textContent = originalText;
+                    saveButton.disabled = false;
+                    return;
+                }
             }
         }
         
-        // Save to UserProfile collection
         const userProfileRef = doc(db, "UserProfile", currentUserData.enrollmentNumber);
         await setDoc(userProfileRef, profileData, { merge: true });
         
-        console.log("✅ Profile saved successfully to UserProfile collection");
+        console.log("✅ Profile saved to Firestore");
         
-        // Update current user data
         currentUserData = { ...currentUserData, ...profileData };
-        
-        // Store in window and localStorage
         window.currentUserData = currentUserData;
         localStorage.setItem("currentUserProfile", JSON.stringify(currentUserData));
         
-        // Fill form fields with updated data
+        // Fill form fields IMMEDIATELY after save
         fillFormFields(currentUserData);
         
-        // Hide popup
         hideProfilePopup();
         
-        // Reset button
         saveButton.textContent = originalText;
         saveButton.disabled = false;
         
@@ -309,153 +479,138 @@ window.saveUserProfile = async function() {
         
     } catch (error) {
         console.error("❌ Error saving profile:", error);
-        alert("Failed to save profile: " + error.message);
+        alert("Failed to save profile:\n" + error.message);
         
-        // Reset button
         const saveButton = document.querySelector(".popbtn");
-        saveButton.textContent = "Save Profile";
-        saveButton.disabled = false;
-    }
-}
-
-/**
- * Upload profile picture to Firebase Storage
- * @param {File} file - Image file to upload
- * @returns {Promise<string>} Download URL of uploaded image
- */
-async function uploadProfilePicture(file) {
-    try {
-        // Validate file is an image
-        if (!file.type.startsWith('image/')) {
-            throw new Error("Only image files are allowed!");
+        if (saveButton) {
+            saveButton.textContent = "Save Profile";
+            saveButton.disabled = false;
         }
-        
-        // Validate file size (max 5MB)
-        const maxSize = 5 * 1024 * 1024; // 5MB
-        if (file.size > maxSize) {
-            throw new Error("Image file size must be less than 5MB!");
-        }
-        
-        const timestamp = Date.now();
-        const fileName = `${currentUserData.enrollmentNumber}_${timestamp}.jpg`;
-        const storageRef = ref(storage, `profilePictures/${fileName}`);
-        
-        // Upload file
-        await uploadBytes(storageRef, file);
-        console.log("✅ File uploaded to storage");
-        
-        // Get download URL
-        const downloadURL = await getDownloadURL(storageRef);
-        console.log("✅ Download URL obtained:", downloadURL);
-        
-        return downloadURL;
-        
-    } catch (error) {
-        console.error("❌ Error uploading profile picture:", error);
-        throw error;
     }
 }
 
 /**
  * Update profile picture in StudentEligibility collection
- * @param {string} photoUrl - URL of the profile picture
  */
 async function updateStudentEligibilityPhoto(photoUrl) {
     try {
-        // First try to find the document by querying uid
+        console.log("Updating profile picture in StudentEligibility...");
+        
         const studentEligibilityRef = collection(db, "StudentEligibility");
         const q = query(studentEligibilityRef, where("uid", "==", currentUserData.uid));
         const querySnapshot = await getDocs(q);
         
         if (!querySnapshot.empty) {
-            // Update the found document
             querySnapshot.forEach(async (docSnapshot) => {
                 const docRef = doc(db, "StudentEligibility", docSnapshot.id);
                 await updateDoc(docRef, {
                     profilePicture: photoUrl,
                     lastUpdated: new Date().toISOString()
                 });
-                console.log("✅ Profile picture updated in StudentEligibility (query method)");
+                console.log("✅ Profile picture updated in StudentEligibility");
             });
         } else {
-            // Try direct update with UID as document ID
             const directDocRef = doc(db, "StudentEligibility", currentUserData.uid);
             await updateDoc(directDocRef, {
                 profilePicture: photoUrl,
                 lastUpdated: new Date().toISOString()
             });
-            console.log("✅ Profile picture updated in StudentEligibility (direct method)");
+            console.log("✅ Profile picture updated (direct method)");
         }
     } catch (error) {
-        console.error("❌ Error updating StudentEligibility photo:", error);
-        // Don't throw error - this is not critical
+        console.warn("⚠️ Could not update StudentEligibility photo:", error.message);
     }
 }
 
 /**
- * Fill popup form fields with existing user data
- * @param {Object} data - User data object
+ * Fill popup form fields - ENHANCED
  */
 function fillPopupFields(data) {
     console.log("📝 Filling popup fields with:", data);
     
-    const nameField = document.getElementById("popup-name");
-    const emailField = document.getElementById("popup-email");
-    const mobileField = document.getElementById("popup-mobile");
-    const enrollmentField = document.getElementById("popup-enrollment");
-    const branchField = document.getElementById("popup-branch");
-    const departmentField = document.getElementById("popup-department");
-    const semesterField = document.getElementById("popup-semester");
-    const yearField = document.getElementById("popup-year");
+    const fields = {
+        'popup-name': data.name || "",
+        'popup-email': data.email || "",
+        'popup-mobile': data.mobile || "",
+        'popup-enrollment': data.enrollmentNumber || "",
+        'popup-branch': data.branch || "",
+        'popup-department': data.department || "",
+        'popup-semester': data.semester || "",
+        'popup-year': data.year || ""
+    };
     
-    if (nameField) nameField.value = data.name || "";
-    if (emailField) emailField.value = data.email || "";
-    if (mobileField) mobileField.value = data.mobile || "";
-    if (enrollmentField) enrollmentField.value = data.enrollmentNumber || "";
+    for (const [id, value] of Object.entries(fields)) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.value = value;
+            console.log(`   ✓ Set ${id} = "${value}"`);
+        } else {
+            console.warn(`   ⚠️ Element not found: ${id}`);
+        }
+    }
     
-    // Fill editable fields if they exist
-    if (branchField && data.branch) branchField.value = data.branch;
-    if (departmentField && data.department) departmentField.value = data.department;
-    if (semesterField && data.semester) semesterField.value = data.semester;
-    if (yearField && data.year) yearField.value = data.year;
-    
-    // Set profile picture preview if exists
+    // Set profile picture preview
     if (data.profilePicture) {
         const preview = document.getElementById("preview");
-        if (preview) preview.src = data.profilePicture;
+        if (preview) {
+            preview.src = data.profilePicture;
+            console.log("   ✓ Profile picture set");
+        }
     }
 }
 
 /**
- * Fill main form fields with user data
- * @param {Object} data - User data object
+ * Fill main form fields - ENHANCED WITH LOGGING
  */
 function fillFormFields(data) {
-    console.log("📝 Filling form fields with:", data);
+    console.log("📝 Filling main form fields with:", data);
     
-    // Auto-fill student information
-    const studentNameField = document.getElementById("studentName");
-    const enrollmentField = document.getElementById("enrollmentNumber");
-    const mobileField = document.getElementById("mobileNumber");
-    const branchField = document.getElementById("branch");
-    const departmentField = document.getElementById("department");
-    const semesterField = document.getElementById("semester");
+    const fields = {
+        'studentName': data.name || "",
+        'enrollmentNumber': data.enrollmentNumber || "",
+        'mobileNumber': data.mobile || "",
+        'branch': data.branch || "",
+        'department': data.department || "",
+        'semester': data.semester || ""
+    };
     
-    if (studentNameField) studentNameField.value = data.name || "";
-    if (enrollmentField) enrollmentField.value = data.enrollmentNumber || "";
-    if (mobileField) mobileField.value = data.mobile || "";
-    if (branchField) branchField.value = data.branch || "";
-    if (departmentField) departmentField.value = data.department || "";
-    if (semesterField) semesterField.value = data.semester || "";
+    let filledCount = 0;
     
-    console.log("✅ Form fields filled successfully");
+    for (const [id, value] of Object.entries(fields)) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.value = value;
+            console.log(`   ✓ Filled ${id} = "${value}"`);
+            filledCount++;
+        } else {
+            console.error(`   ❌ ELEMENT NOT FOUND: ${id}`);
+        }
+    }
+    
+    console.log(`✅ Filled ${filledCount}/${Object.keys(fields).length} form fields`);
+    
+    // Verify the fields are actually filled
+    setTimeout(() => {
+        console.log("🔍 Verifying form fields after 100ms:");
+        for (const [id, expectedValue] of Object.entries(fields)) {
+            const element = document.getElementById(id);
+            if (element) {
+                const actualValue = element.value;
+                if (actualValue === expectedValue) {
+                    console.log(`   ✅ ${id}: "${actualValue}"`);
+                } else {
+                    console.error(`   ❌ ${id}: Expected "${expectedValue}", got "${actualValue}"`);
+                }
+            }
+        }
+    }, 100);
 }
 
 /**
- * Show profile creation/edit popup
+ * Show profile popup
  */
 function showProfilePopup() {
-    console.log("🔔 Showing profile popup");
+    console.log("📋 Showing profile popup");
     
     const popup = document.getElementById("popupOverlay");
     const blurBg = document.getElementById("blur_bg");
@@ -468,9 +623,6 @@ function showProfilePopup() {
     if (blurBg) {
         blurBg.style.filter = "blur(8px)";
     }
-    
-    // Fill popup with existing data
-    fillPopupFields(currentUserData);
 }
 
 /**
@@ -503,16 +655,14 @@ document.addEventListener('DOMContentLoaded', () => {
         fileInput.addEventListener("change", function() {
             const file = this.files[0];
             if (file) {
-                // Validate file type
                 if (!file.type.startsWith('image/')) {
-                    alert("Please select an image file!");
+                    alert("⚠️ Please select an image file!\n\nAllowed: JPG, PNG, GIF");
                     this.value = "";
                     return;
                 }
                 
-                // Validate file size
                 if (file.size > 5 * 1024 * 1024) {
-                    alert("Image size must be less than 5MB!");
+                    alert("⚠️ Image file is too large!\n\nMaximum size: 5MB\nYour file: " + (file.size / 1024 / 1024).toFixed(2) + "MB");
                     this.value = "";
                     return;
                 }
@@ -528,14 +678,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * Get current user data (for use in other modules)
- * @returns {Object} Current user data
- */
-export function getCurrentUserData() {
-    return currentUserData;
-}
-
-/**
  * Open edit profile popup
  */
 window.editProfile = function() {
@@ -544,5 +686,14 @@ window.editProfile = function() {
     showProfilePopup();
 }
 
-// Export for use in other modules
+/**
+ * Get current user data (for use in other modules)
+ */
+export function getCurrentUserData() {
+    return currentUserData;
+}
+
+// Export functions
 export { loadUserProfile, showProfilePopup, hideProfilePopup };
+
+console.log("✅ Profile Manager module loaded");

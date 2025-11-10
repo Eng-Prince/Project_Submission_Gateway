@@ -1,9 +1,11 @@
 /*    
-
+  This file handles the submit layout like the user branch semester year etc
 */
 
 // Defining Variable
 const fileInput = document.getElementById("fileInput");
+const projectFileInput = document.getElementById("projectFileInput")
+
 const previewBox = document.getElementById("previewBox");
 const filePreview = document.getElementById("filePreview");
 let selectedFile = null;
@@ -20,6 +22,7 @@ fileInput.addEventListener("change", function () {
     filePreview.innerHTML = `<embed src="${URL.createObjectURL(selectedFile)}" type="application/pdf" />`;
   }
 });
+
 
 function uploadFile() {
   if (!selectedFile) {
@@ -95,8 +98,6 @@ function showAllProjects() {
     <p>Date of Submission: ${SubmitDate} </p>
      </div>
     <button class="delete-btn" onclick="deleteProject()">Delete</button>
-
-
     `;
     projectHTML += html;
   }
@@ -176,11 +177,13 @@ function saveProfile() {
     }
 
     function closeProfile() {
-      document.getElementById("profileBox","profileBox2").classList.remove("show");
+      document.getElementById("profileBox").classList.remove("show");
       setTimeout(() => {
         document.getElementById("overlay", "overlay2").style.display = "none";
       }, 400); // wait for animation to finish
     }
+
+
     function closeProjectD() {
       document.getElementById("profileBox2").classList.remove("show");
       setTimeout(() => {

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Dashboard - Project Submissions</title>
+  <link rel="stylesheet" href="../02_css/teacherDashboard.css">
+</head>
+<body>
+
+  <div class="dashboard-header">
+    <div>
+      <h1>👨‍🏫 Teacher Dashboard</h1>
+      <p>Review and manage student project submissions</p>
+    </div>
+    <div class="teacher-info">
+      <p><strong>Logged in as:</strong> <span id="teacherName">Loading...</span></p>
+      <p><strong>Email:</strong> <span id="userEmail">Loading...</span></p>
+    </div>
+    <div style="margin-top: 15px;">
+      <button class="btn btn-success" onclick="loadAllProjects()">🔄 Reload Projects</button>
+      <button class="btn btn-primary" onclick="skipAuth()">⚡ Skip Auth (Load All)</button>
+      <button class="btn btn-danger" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- Debug Section -->
+  <div class="debug-section">
+    <h3>🔍 Information</h3>
+    <div id="debugInfo">
+      <div class="debug-item">Checking authentication...</div>
+    </div>
+  </div>
+
+  <!-- Statistics -->
+  <div class="stats">
+    <div class="stat-card">
+      <h2 id="totalProjects">0</h2>
+      <p>Total Submissions</p>
+    </div>
+    <div class="stat-card">
+      <h2 id="submittedProjects">0</h2>
+      <p>Pending Review</p>
+    </div>
+    <div class="stat-card">
+      <h2 id="approvedProjects">0</h2>
+      <p>Approved</p>
+    </div>
+    <div class="stat-card">
+      <h2 id="rejectedProjects">0</h2>
+      <p>Rejected</p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <h3>🔍 Filter Submissions</h3>
+    <div class="filter-row">
+      <select id="filterStatus">
+        <option value="">All Statuses</option>
+        <option value="submitted">Submitted</option>
+        <option value="reviewed">Under Review</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+      </select>
+      
+      <select id="filterBranch">
+        <option value="">All Branches</option>
+        <option value="Computer Science and Engineering">Computer Science</option>
+        <option value="Mechanical Engineering">Mechanical</option>
+        <option value="Civil Engineering">Civil</option>
+        <option value="Electrical Engineering">Electrical</option>
+      </select>
+      
+      <select id="filterSemester">
+        <option value="">All Semesters</option>
+        <option value="1">Semester 1</option>
+        <option value="2">Semester 2</option>
+        <option value="3">Semester 3</option>
+        <option value="4">Semester 4</option>
+        <option value="5">Semester 5</option>
+        <option value="6">Semester 6</option>
+        <option value="7">Semester 7</option>
+        <option value="8">Semester 8</option>
+      </select>
+      
+      <input type="text" id="filterStudent" placeholder="Search by student name or enrollment...">
+      
+      <button class="filter-btn" onclick="applyFilters()">Apply Filters</button>
+    </div>
+  </div>
+
+  <!-- Projects List -->
+  <div class="projects-container">
+    <h3 style="margin-bottom: 20px; color: #333;">📚 Student Submissions</h3>
+    <div id="projectsList">
+      <div class="loading">⏳ Loading projects...</div>
+    </div>
+  </div>
+
+  <!-- Load Scripts -->
+  <script type="module" src="../04_DatabaseHandler/teacherManager.js"></script>
+
+</body>
+</html>

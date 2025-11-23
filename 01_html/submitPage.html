@@ -5,43 +5,51 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Submit Project - Student Portal</title>
   <link rel="stylesheet" href="../02_css/submit_style.css">
-
-  
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   
   <!-- Profile Creation/Edit Popup -->
   <div class="popup-overlay" id="popupOverlay">
     <div class="popup">
-      <h2>Complete Your Profile</h2>
+      <h2><i class="fas fa-user-circle"></i> Complete Your Profile</h2>
 
       <!-- Profile Picture Upload -->
       <div class="profile-pic-container">
-        <img id="preview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect fill='%23ddd' width='120' height='120'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' fill='%23999' font-size='14' dy='.3em'%3EClick to Upload%3C/text%3E%3C/svg%3E" alt="Profile" class="profile-pic" onclick="document.getElementById('fileInput').click()">
+        <div class="profile-pic-wrapper">
+          <img id="preview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect fill='%23ddd' width='120' height='120'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' fill='%23999' font-size='14' dy='.3em'%3EClick to Upload%3C/text%3E%3C/svg%3E" alt="Profile" class="profile-pic" onclick="document.getElementById('fileInput').click()">
+          <div class="camera-overlay" onclick="document.getElementById('fileInput').click()">
+            <i class="fas fa-camera"></i>
+          </div>
+        </div>
         <input type="file" id="fileInput" accept="image/*" style="display: none;">
       </div>
 
       <!-- Pre-filled fields (from StudentEligibility) - Read Only -->
       <div class="readonly-section">
-        <label>Name</label>
+        <label><i class="fas fa-user"></i> Name</label>
         <input type="text" id="popup-name" placeholder="Loading..." readonly>
         
-        <label>Email</label>
+        <label><i class="fas fa-envelope"></i> Email</label>
         <input type="email" id="popup-email" placeholder="Loading..." readonly>
         
-        <label>Mobile Number</label>
+        <label><i class="fas fa-phone"></i> Mobile Number</label>
         <input type="text" id="popup-mobile" placeholder="Loading..." readonly>
         
-        <label>Enrollment Number</label>
+        <label><i class="fas fa-id-card"></i> Enrollment Number</label>
         <input type="text" id="popup-enrollment" placeholder="Loading..." readonly>
       </div>
 
       <div class="divider">
-        <span>Complete Your Profile Information</span>
+        <span><i class="fas fa-pen"></i> Complete Your Profile Information</span>
       </div>
 
       <!-- Editable fields (for UserProfile) -->
-      <input type="search" placeholder="Branch *" id="popup-branch" list="branchList" required>
+      <div class="input-wrapper">
+        <i class="fas fa-graduation-cap input-icon"></i>
+        <input type="search" placeholder="Branch *" id="popup-branch" list="branchList" required>
+      </div>
       <datalist id="branchList">
         <option value="Computer Science and Engineering"></option>
         <option value="Mechanical Engineering"></option>
@@ -50,7 +58,10 @@
         <option value="Electronics and Communication"></option>
       </datalist>
 
-      <input type="search" placeholder="Department *" id="popup-department" list="deptList" required>
+      <div class="input-wrapper">
+        <i class="fas fa-building input-icon"></i>
+        <input type="search" placeholder="Department *" id="popup-department" list="deptList" required>
+      </div>
       <datalist id="deptList">
         <option value="Department of Engineering"></option>
         <option value="Department of Law"></option>
@@ -58,69 +69,139 @@
         <option value="Department of Nursing"></option>
       </datalist>
 
-      <input type="text" placeholder="Semester (e.g., 5) *" id="popup-semester" required>
-      <input type="text" placeholder="Year (e.g., 2023-2024) *" id="popup-year" required>
+      <div class="input-wrapper">
+        <i class="fas fa-book-open input-icon"></i>
+        <input type="text" placeholder="Semester (e.g., 5) *" id="popup-semester" required>
+      </div>
 
-      <button class="popbtn" onclick="saveUserProfile()">Save Profile</button>
+      <div class="input-wrapper">
+        <i class="fas fa-calendar-alt input-icon"></i>
+        <input type="text" placeholder="Year (e.g., 2023-2024) *" id="popup-year" required>
+      </div>
+
+      <div class="popup-actions">
+        <button class="popbtn popbtn-save" onclick="saveUserProfile()">
+          <i class="fas fa-save"></i> Save Profile
+        </button>
+        <button class="popbtn popbtn-cancel" onclick="closeProfilePopup()">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+      </div>
       <p class="popup-note">* Name, Email, Mobile are auto-filled from your account</p>
     </div>
   </div> 
   
   <!-- Navigation Bar -->
-<div class="navBar">
+  <div class="navBar">
     <!-- Profile Icon -->
     <div class="nav-icon" onclick="openProfile()" title="View Profile">
-        <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="30" cy="30" r="28" fill="#4CAF50"/>
-            <circle cx="30" cy="22" r="10" fill="white"/>
-            <path d="M 10 50 Q 10 35, 30 35 Q 50 35, 50 50" fill="white"/>
-        </svg>
+      <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="30" cy="30" r="28" fill="#4CAF50"/>
+        <circle cx="30" cy="22" r="10" fill="white"/>
+        <path d="M 10 50 Q 10 35, 30 35 Q 50 35, 50 50" fill="white"/>
+      </svg>
     </div>
 
     <!-- My Projects Icon -->
     <div class="nav-icon" onclick="showMyProjects()" title="My Projects">
-        <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="30" cy="30" r="28" fill="#2196F3"/>
-            <rect x="15" y="18" width="30" height="24" rx="2" fill="none" stroke="white" stroke-width="2"/>
-            <line x1="20" y1="25" x2="40" y2="25" stroke="white" stroke-width="2"/>
-            <line x1="20" y1="30" x2="40" y2="30" stroke="white" stroke-width="2"/>
-            <line x1="20" y1="35" x2="35" y2="35" stroke="white" stroke-width="2"/>
-        </svg>
+      <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="30" cy="30" r="28" fill="#2196F3"/>
+        <rect x="15" y="18" width="30" height="24" rx="2" fill="none" stroke="white" stroke-width="2"/>
+        <line x1="20" y1="25" x2="40" y2="25" stroke="white" stroke-width="2"/>
+        <line x1="20" y1="30" x2="40" y2="30" stroke="white" stroke-width="2"/>
+        <line x1="20" y1="35" x2="35" y2="35" stroke="white" stroke-width="2"/>
+      </svg>
     </div>
 
     <!-- Edit Profile Icon -->
     <div class="nav-icon" onclick="editProfile()" title="Edit Profile">
-        <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="30" cy="30" r="28" fill="#FF9800"/>
-            <path d="M 20 40 L 20 35 L 35 20 L 40 25 L 25 40 Z" fill="white"/>
-            <rect x="36" y="17" width="7" height="7" transform="rotate(45 39.5 20.5)" fill="white"/>
-        </svg>
+      <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="30" cy="30" r="28" fill="#FF9800"/>
+        <path d="M 20 40 L 20 35 L 35 20 L 40 25 L 25 40 Z" fill="white"/>
+        <rect x="36" y="17" width="7" height="7" transform="rotate(45 39.5 20.5)" fill="white"/>
+      </svg>
     </div>
 
     <!-- Logout Icon -->
     <div class="nav-icon" onclick="logout()" title="Logout">
-        <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="30" cy="30" r="28" fill="#F44336"/>
-            <path d="M 25 20 L 25 40 L 35 40 L 35 35 L 30 35 L 30 25 L 35 25 L 35 20 Z" fill="white"/>
-            <path d="M 32 27 L 38 30 L 32 33 Z" fill="white"/>
-            <line x1="33" y1="30" x2="38" y2="30" stroke="white" stroke-width="2"/>
-        </svg>
+      <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="30" cy="30" r="28" fill="#F44336"/>
+        <path d="M 25 20 L 25 40 L 35 40 L 35 35 L 30 35 L 30 25 L 35 25 L 35 20 Z" fill="white"/>
+        <path d="M 32 27 L 38 30 L 32 33 Z" fill="white"/>
+        <line x1="33" y1="30" x2="38" y2="30" stroke="white" stroke-width="2"/>
+      </svg>
     </div>
-</div>
+  </div>
 
   <!-- Profile View Overlay -->
   <div class="overlay" id="overlay">
     <div class="profile-box" id="profileBox">
-      <img id="profile-display" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect fill='%23ddd' width='120' height='120'/%3E%3C/svg%3E" alt="Profile Photo">
+      <div class="profile-pic-display">
+        <img id="profile-display" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect fill='%23ddd' width='120' height='120'/%3E%3C/svg%3E" alt="Profile Photo">
+      </div>
       <h2 id="profile-name">Loading...</h2>
-      <p id="profile-email">Email: </p>
-      <p id="profile-mobile">Mobile: </p>
-      <p id="profile-enrollment">Enrollment: </p>
-      <p id="profile-branch">Branch: </p>
-      <p id="profile-department">Department: </p>
-      <p id="profile-semester">Semester: </p>
-      <p id="profile-year">Year: </p>
-      <button class="close-btn" onclick="closeProfile()">Close</button>
+      
+      <div class="profile-info-grid">
+        <div class="profile-info-item">
+          <i class="fas fa-envelope"></i>
+          <div>
+            <span class="info-label">Email Address</span>
+            <span class="info-value" id="profile-email">Loading...</span>
+          </div>
+        </div>
+        
+        <div class="profile-info-item">
+          <i class="fas fa-phone"></i>
+          <div>
+            <span class="info-label">Mobile Number</span>
+            <span class="info-value" id="profile-mobile">Loading...</span>
+          </div>
+        </div>
+        
+        <div class="profile-info-item">
+          <i class="fas fa-id-card"></i>
+          <div>
+            <span class="info-label">Enrollment Number</span>
+            <span class="info-value" id="profile-enrollment">Loading...</span>
+          </div>
+        </div>
+        
+        <div class="profile-info-item">
+          <i class="fas fa-graduation-cap"></i>
+          <div>
+            <span class="info-label">Branch</span>
+            <span class="info-value" id="profile-branch">Loading...</span>
+          </div>
+        </div>
+        
+        <div class="profile-info-item">
+          <i class="fas fa-building"></i>
+          <div>
+            <span class="info-label">Department</span>
+            <span class="info-value" id="profile-department">Loading...</span>
+          </div>
+        </div>
+        
+        <div class="profile-info-item">
+          <i class="fas fa-book-open"></i>
+          <div>
+            <span class="info-label">Semester</span>
+            <span class="info-value" id="profile-semester">Loading...</span>
+          </div>
+        </div>
+        
+        <div class="profile-info-item">
+          <i class="fas fa-calendar-alt"></i>
+          <div>
+            <span class="info-label">Academic Year</span>
+            <span class="info-value" id="profile-year">Loading...</span>
+          </div>
+        </div>
+      </div>
+      
+      <button class="close-btn" onclick="closeProfile()">
+        <i class="fas fa-times"></i> Close
+      </button>
     </div>
   </div>
 
@@ -128,11 +209,14 @@
   <div class="overlay" id="projectsOverlay">
     <div class="projects-box">
       <div class="projects-header">
-        <h2>My Submitted Projects</h2>
+        <h2><i class="fas fa-folder-open"></i> My Submitted Projects</h2>
         <button class="close-btn" onclick="closeMyProjects()">✕</button>
       </div>
       <div id="projectsList" class="projects-list">
-        <p class="loading-text">Loading projects...</p>
+        <p class="loading-text">
+          <i class="fas fa-spinner fa-spin"></i>
+          <span>Loading your projects...</span>
+        </p>
       </div>
     </div>
   </div>
@@ -144,78 +228,103 @@
         
         <!-- Alert Box -->
         <div id="customAlert" class="alert-box">
+          <i class="fas fa-info-circle alert-icon"></i>
           <span id="alertMessage"></span>
           <button onclick="closeAlert()">OK</button>
         </div>
 
         <form id="projectForm" onsubmit="return false;">
-          <h2>Submit Your Project</h2>
+          <h2><i class="fas fa-upload"></i> Submit Your Project</h2>
 
           <div class="input-group">
             <!-- Auto-filled from profile (Read-only) -->
-            <input type="text" placeholder="Student Name" id="studentName" readonly>
-            <input type="text" placeholder="Enrollment Number" id="enrollmentNumber" readonly>
-            <input type="text" placeholder="Mobile Number" id="mobileNumber" readonly>
-            <input type="text" placeholder="Branch" id="branch" readonly>
-            <input type="text" placeholder="Department" id="department" readonly>
-            <input type="text" placeholder="Semester" id="semester" readonly>
+            <div class="input-wrapper">
+              <i class="fas fa-user input-icon"></i>
+              <input type="text" placeholder="Student Name" id="studentName" readonly>
+            </div>
+
+            <div class="input-wrapper">
+              <i class="fas fa-id-card input-icon"></i>
+              <input type="text" placeholder="Enrollment Number" id="enrollmentNumber" readonly>
+            </div>
+
+            <div class="input-wrapper">
+              <i class="fas fa-phone input-icon"></i>
+              <input type="text" placeholder="Mobile Number" id="mobileNumber" readonly>
+            </div>
+
+            <div class="input-wrapper">
+              <i class="fas fa-graduation-cap input-icon"></i>
+              <input type="text" placeholder="Branch" id="branch" readonly>
+            </div>
+
+            <div class="input-wrapper">
+              <i class="fas fa-building input-icon"></i>
+              <input type="text" placeholder="Department" id="department" readonly>
+            </div>
+
+            <div class="input-wrapper">
+              <i class="fas fa-book-open input-icon"></i>
+              <input type="text" placeholder="Semester" id="semester" readonly>
+            </div>
 
             <!-- Project specific fields (User enters) -->
-            <input type="text" placeholder="Project Title *" id="projectTitle" required>
+            <div class="input-wrapper">
+              <i class="fas fa-project-diagram input-icon"></i>
+              <input type="text" placeholder="Project Title *" id="projectTitle" required>
+            </div>
             
-            <textarea placeholder="Describe your project here... *" id="projectDescription" rows="6" required></textarea>
+            <div class="input-wrapper">
+              <i class="fas fa-align-left input-icon textarea-icon"></i>
+              <textarea placeholder="Describe your project here... *" id="projectDescription" rows="6" required></textarea>
+            </div>
             
             <!-- GitHub Repository Link (REQUIRED) -->
-            <input type="url" placeholder="GitHub Repository Link * (e.g., https://github.com/username/project)" id="githubLink" required>
-            <p class="field-hint">📌 Required: Upload your code to GitHub and paste the repository link</p>
+            <div class="input-wrapper">
+              <i class="fab fa-github input-icon"></i>
+              <input type="url" placeholder="GitHub Repository Link * (e.g., https://github.com/username/project)" id="githubLink" required>
+            </div>
+            <p class="field-hint"><i class="fas fa-info-circle"></i> Required: Upload your code to GitHub and paste the repository link</p>
             
             <!-- Live Project Link (OPTIONAL) -->
-            <input type="url" placeholder="Live Project Link (Optional - Vercel, Netlify, etc.)" id="liveProjectLink">
-            <p class="field-hint">🚀 Optional: If deployed, paste the live demo URL</p>
+            <div class="input-wrapper">
+              <i class="fas fa-globe input-icon"></i>
+              <input type="url" placeholder="Live Project Link (Optional - Vercel, Netlify, etc.)" id="liveProjectLink">
+            </div>
+            <p class="field-hint"><i class="fas fa-rocket"></i> Optional: If deployed, paste the live demo URL</p>
             
-            <!-- PDF Report Section - TWO OPTIONS -->
+            <!-- PDF Report Section - UPLOAD ONLY -->
             <div class="pdf-upload-section">
-              <h4>📄 Project Report PDF (Choose ONE):</h4>
+              <h4><i class="fas fa-file-pdf"></i> Project Report PDF (Required):</h4>
               
-              <!-- OPTION 1: Upload PDF File to Cloudinary -->
-              <div class="upload-option">
-                <label for="pdfFileInput" class="file-label">
-                  <strong>Option 1:</strong> Upload PDF from Device 
-                  <span style="color: #4CAF50;">(Cloudinary - 25GB FREE!)</span>
-                </label>
-                <input type="file" id="pdfFileInput" accept=".pdf" />
-                <div id="pdfPreview" class="pdf-preview"></div>
-                <p class="field-hint">⚠️ Max 10MB, PDF format only</p>
+              <div class="upload-box" onclick="document.getElementById('pdfFileInput').click()">
+                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                <p class="upload-text">Click to upload PDF from your device</p>
+                <p class="upload-subtext">Maximum file size: 10MB</p>
               </div>
               
-              <div style="text-align: center; margin: 15px 0; color: rgba(255,255,255,0.7);">
-                <strong>--- OR ---</strong>
-              </div>
-              
-              <!-- OPTION 2: PDF Link -->
-              <div class="upload-option">
-                <label class="file-label">
-                  <strong>Option 2:</strong> Paste PDF Link 
-                  <span style="color: #2196F3;">(GitHub/Drive/Dropbox)</span>
-                </label>
-                <input type="url" placeholder="PDF Link (GitHub/Drive/Dropbox)" id="pdfLink">
-                <p class="field-hint">💡 Upload PDF to GitHub/Drive, then paste link here</p>
-              </div>
+              <input type="file" id="pdfFileInput" accept=".pdf" style="display: none;" />
+              <div id="pdfPreview" class="pdf-preview"></div>
             </div>
             
             <div class="pdf-help-section">
-              <h4>💡 FREE PDF Storage Options:</h4>
-              <ol>
-                <li><strong>Cloudinary (Option 1):</strong> Upload directly - 25GB FREE!</li>
-                <li><strong>GitHub:</strong> Add report.pdf to your repo → Copy link</li>
-                <li><strong>Google Drive:</strong> Upload → Share → "Anyone with link" → Copy</li>
-                <li><strong>Dropbox:</strong> Upload → Share → Copy link</li>
-              </ol>
+              <h4><i class="fas fa-lightbulb"></i> Quick Tips:</h4>
+              <ul>
+                <li><i class="fas fa-check-circle"></i> Your PDF will be securely stored in clg db</li>
+                <li><i class="fas fa-check-circle"></i> Include project screenshots and documentation</li>
+                <li><i class="fas fa-check-circle"></i> Make sure your PDF has more than 100 pages</li>
+                <li><i class="fas fa-check-circle"></i> Use clear headings and proper formatting</li>
+              </ul>
             </div>
 
-            <input type="date" placeholder="Submission Date *" id="submissionDate" required>
+            <div class="input-wrapper">
+              <i class="fas fa-calendar-check input-icon"></i>
+              <input type="date" placeholder="Submission Date *" id="submissionDate" required>
+            </div>
 
-            <button type="button" class="submit-btn" onclick="submitProject()">Submit Project</button>
+            <button type="button" class="submit-btn" onclick="submitProject()">
+              <i class="fas fa-paper-plane"></i> Submit Project
+            </button>
           </div>
         </form>
 
@@ -229,6 +338,16 @@
   <script type="module" src="../04_DatabaseHandler/profileManager.js"></script>
   <script type="module" src="../04_DatabaseHandler/projectManager.js"></script>
   <script src="../03_javaScript/uiController.js"></script>
+
+  <!-- Close Profile Popup Function -->
+  <script>
+    function closeProfilePopup() {
+      const popup = document.getElementById('popupOverlay');
+      if (popup) {
+        popup.classList.add('hidden');
+      }
+    }
+  </script>
 
 </body>
 </html>

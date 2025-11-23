@@ -31,14 +31,29 @@ window.submitProject = async function() {
             return;
         }
         
+        // Get form elements first and check if they exist
+        const projectTitleEl = document.getElementById("projectTitle");
+        const projectDescriptionEl = document.getElementById("projectDescription");
+        const githubLinkEl = document.getElementById("githubLink");
+        const liveProjectLinkEl = document.getElementById("liveProjectLink");
+        const pdfLinkInputEl = document.getElementById("pdfLink");
+        const pdfFileInputEl = document.getElementById("pdfFileInput");
+        const submissionDateEl = document.getElementById("submissionDate");
+        
+        // Check if required elements exist
+        if (!projectTitleEl || !projectDescriptionEl || !githubLinkEl || !submissionDateEl) {
+            console.error("❌ Missing form elements!");
+            alert("Error: Form elements are missing. Please refresh the page and try again.");
+            return;
+        }
+        
         // Get form values
-        const projectTitle = document.getElementById("projectTitle").value.trim();
-        const projectDescription = document.getElementById("projectDescription").value.trim();
-        const githubLink = document.getElementById("githubLink").value.trim();
-        const liveProjectLink = document.getElementById("liveProjectLink").value.trim();
-        const pdfLinkInput = document.getElementById("pdfLink").value.trim();
-        const pdfFileInput = document.getElementById("pdfFileInput");
-        const submissionDate = document.getElementById("submissionDate").value;
+        const projectTitle = projectTitleEl.value.trim();
+        const projectDescription = projectDescriptionEl.value.trim();
+        const githubLink = githubLinkEl.value.trim();
+        const liveProjectLink = liveProjectLinkEl ? liveProjectLinkEl.value.trim() : "";
+        const pdfLinkInput = pdfLinkInputEl ? pdfLinkInputEl.value.trim() : "";
+        const submissionDate = submissionDateEl.value;
         
         // Validate required fields
         if (!projectTitle || !projectDescription || !githubLink || !submissionDate) {
@@ -53,7 +68,7 @@ window.submitProject = async function() {
         }
         
         // Check PDF
-        const hasPdfFile = pdfFileInput && pdfFileInput.files[0];
+        const hasPdfFile = pdfFileInputEl && pdfFileInputEl.files && pdfFileInputEl.files[0];
         const hasPdfLink = pdfLinkInput && pdfLinkInput.length > 0;
         
         if (!hasPdfFile && !hasPdfLink) {
@@ -71,17 +86,17 @@ window.submitProject = async function() {
             studentName: userData.name,
             enrollmentNumber: userData.enrollmentNumber,
             email: userData.email,
-            mobile: userData.mobile,
-            branch: userData.branch,
-            department: userData.department,
-            semester: userData.semester,
-            year: userData.year,
+            mobile: userData.mobile || "",
+            branch: userData.branch || "",
+            department: userData.department || "",
+            semester: userData.semester || "",
+            year: userData.year || "",
             
             // Project information
             projectTitle: projectTitle,
             projectDescription: projectDescription,
             githubLink: githubLink,
-            liveProjectLink: liveProjectLink || "",
+            liveProjectLink: liveProjectLink,
             submissionDate: submissionDate,
             
             // Metadata
@@ -100,7 +115,7 @@ window.submitProject = async function() {
             
             try {
                 const uploadResult = await uploadProjectPDF(
-                    pdfFileInput.files[0],
+                    pdfFileInputEl.files[0],
                     userData.enrollmentNumber,
                     projectTitle
                 );
@@ -137,16 +152,21 @@ window.submitProject = async function() {
             projectData.pdfSource = "link";
         }
         
-        // Save to Firestore
+        // Save to Firestore - This will CREATE "Projects" collection if it doesn't exist
+        console.log("💾 Saving to Firestore...");
         const projectsRef = collection(db, "Projects");
         const docRef = await addDoc(projectsRef, projectData);
         
         console.log("✅ Project submitted successfully with ID:", docRef.id);
         
         // Save to localStorage for offline view
-        let localProjects = JSON.parse(localStorage.getItem('projects')) || [];
-        localProjects.push({ ...projectData, id: docRef.id });
-        localStorage.setItem('projects', JSON.stringify(localProjects));
+        try {
+            let localProjects = JSON.parse(localStorage.getItem('projects')) || [];
+            localProjects.push({ ...projectData, id: docRef.id });
+            localStorage.setItem('projects', JSON.stringify(localProjects));
+        } catch (storageError) {
+            console.warn("⚠️ Could not save to localStorage:", storageError);
+        }
         
         // Clear form
         clearProjectForm();
@@ -194,13 +214,21 @@ window.showMyProjects = async function() {
             return;
         }
         
-        document.getElementById("projectsOverlay").style.display = "flex";
+        const overlay = document.getElementById("projectsOverlay");
+        if (overlay) {
+            overlay.style.display = "flex";
+        }
         
         const projectsRef = collection(db, "Projects");
         const q = query(projectsRef, where("enrollmentNumber", "==", userData.enrollmentNumber));
         const querySnapshot = await getDocs(q);
         
         const projectsList = document.getElementById("projectsList");
+        
+        if (!projectsList) {
+            console.error("❌ projectsList element not found!");
+            return;
+        }
         
         if (querySnapshot.empty) {
             projectsList.innerHTML = `
@@ -226,8 +254,11 @@ window.showMyProjects = async function() {
         
     } catch (error) {
         console.error("❌ Error loading projects:", error);
-        document.getElementById("projectsList").innerHTML = 
-            '<p class="error-text">Failed to load projects. Please try again.</p>';
+        const projectsList = document.getElementById("projectsList");
+        if (projectsList) {
+            projectsList.innerHTML = 
+                '<p class="error-text">Failed to load projects. Please try again.</p>';
+        }
     }
 }
 
@@ -266,8 +297,8 @@ function createProjectCard(project, index, docId) {
                 <p class="project-description">${project.projectDescription}</p>
                 
                 <div class="project-details">
-                    <p><strong>📚 Branch:</strong> ${project.branch}</p>
-                    <p><strong>📖 Semester:</strong> ${project.semester}</p>
+                    <p><strong>📚 Branch:</strong> ${project.branch || 'N/A'}</p>
+                    <p><strong>📖 Semester:</strong> ${project.semester || 'N/A'}</p>
                     <p><strong>📅 Submission Date:</strong> ${project.submissionDate}</p>
                     <p><strong>🕒 Submitted At:</strong> ${submittedDate}</p>
                 </div>
@@ -303,7 +334,10 @@ function createProjectCard(project, index, docId) {
  * Close projects overlay
  */
 window.closeMyProjects = function() {
-    document.getElementById("projectsOverlay").style.display = "none";
+    const overlay = document.getElementById("projectsOverlay");
+    if (overlay) {
+        overlay.style.display = "none";
+    }
 }
 
 /**
@@ -343,25 +377,38 @@ document.addEventListener('DOMContentLoaded', () => {
  * Remove PDF
  */
 window.removePDF = function() {
-    document.getElementById("pdfFileInput").value = "";
-    document.getElementById("pdfPreview").innerHTML = "";
+    const pdfInput = document.getElementById("pdfFileInput");
+    const pdfPreview = document.getElementById("pdfPreview");
+    
+    if (pdfInput) pdfInput.value = "";
+    if (pdfPreview) pdfPreview.innerHTML = "";
 }
 
 /**
  * Clear form
  */
 function clearProjectForm() {
-    document.getElementById("projectTitle").value = "";
-    document.getElementById("projectDescription").value = "";
-    document.getElementById("githubLink").value = "";
-    document.getElementById("liveProjectLink").value = "";
-    document.getElementById("pdfLink").value = "";
-    if (document.getElementById("pdfFileInput")) {
-        document.getElementById("pdfFileInput").value = "";
-    }
-    if (document.getElementById("pdfPreview")) {
-        document.getElementById("pdfPreview").innerHTML = "";
-    }
+    const elements = [
+        { id: "projectTitle", type: "input" },
+        { id: "projectDescription", type: "input" },
+        { id: "githubLink", type: "input" },
+        { id: "liveProjectLink", type: "input" },
+        { id: "pdfLink", type: "input" },
+        { id: "pdfFileInput", type: "input" },
+        { id: "submissionDate", type: "input" },
+        { id: "pdfPreview", type: "div" }
+    ];
+    
+    elements.forEach(({ id, type }) => {
+        const element = document.getElementById(id);
+        if (element) {
+            if (type === "input") {
+                element.value = "";
+            } else if (type === "div") {
+                element.innerHTML = "";
+            }
+        }
+    });
 }
 
 /**

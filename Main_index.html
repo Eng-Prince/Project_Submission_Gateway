@@ -4,10 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <title>Login & Sign Up</title>
-  <style>
-
-  </style>
   <link rel="stylesheet" href="02_css/style.css">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
@@ -15,9 +14,8 @@
   <div class="container" id="mainContainer">
     <div class="form-container">
 
-      <!-- Login Form Changes give them a unique id -->
+      <!-- Login Form -->
       <img class="ipic" src="images/1.png" alt="">
-
 
       <form class="form-box" id="loginForm">
         <h2>Welcome Back...</h2>
@@ -25,22 +23,24 @@
         
         <div class="input-group">
           
-          <input type="email" placeholder="Email" id="loginEmail" >
-          <span  class="error" id = "signInEmailError">  </span>
-
-          <div class="password-container">
-
-            <input type="password" placeholder="Password" id="loginPassword" >
-            <span  class="error" id = "signInPwdError"> </span>
-
+          <div class="input-wrapper">
+            <i class="fas fa-envelope input-icon"></i>
+            <input type="email" placeholder="Email" id="loginEmail">
           </div>
-          
+          <span class="error" id="signInEmailError"></span>
+
+          <div class="input-wrapper password-container">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" placeholder="Password" id="loginPassword">
+            <button type="button" class="toggle-password" id="toggleLoginPassword">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          <span class="error" id="signInPwdError"></span>
 
           <button type="button" id="btnLogin" onclick="loginPage()">Login</button>
-          <!-- <button class="toggle" id="togglePassword">
-          ho
-          </button> -->
         </div>
+        
         <div class="switch">
           Don't have an account? <span onclick="switchToSignup()">Sign Up</span>
         </div>
@@ -57,27 +57,38 @@
 
             <div class="student_login">
               <label for="studentRoll">
-                <input type="radio" name="role" id="studentRoll" onclick="studentimg('student');"> I`am Student
+                <input type="radio" name="role" id="studentRoll" onclick="studentimg('student');"> I'm Student
               </label>
             </div>
             <div class="teacher_login">
               <label for="teacherRoll">
-                <input type="radio" name="role" id="teacherRoll" onclick="studentimg('teacher');"> I`am Teacher
+                <input type="radio" name="role" id="teacherRoll" onclick="studentimg('teacher');"> I'm Teacher
               </label>
             </div>
           </div>
         
-          
           <div class="input-group2">
             
-            <input type="text" placeholder="Enrollment Number" id="signUpEnroll">
-             <span  class="error" id = "signUpEnrollError"> </span>
+            <div class="input-wrapper">
+              <i class="fas fa-id-card input-icon"></i>
+              <input type="text" placeholder="Enrollment Number" id="signUpEnroll">
+            </div>
+            <span class="error" id="signUpEnrollError"></span>
 
-            <input type="email" placeholder="Email" id="signUpEmail">
-             <span  class="error" id = "signUpEmailError"> </span>
+            <div class="input-wrapper">
+              <i class="fas fa-envelope input-icon"></i>
+              <input type="email" placeholder="Email" id="signUpEmail">
+            </div>
+            <span class="error" id="signUpEmailError"></span>
 
-            <input type="" placeholder="Password" id="signUpPassword">
-              <span  class="error" id = "signUpPwdError"> </span>
+            <div class="input-wrapper password-container">
+              <i class="fas fa-lock input-icon"></i>
+              <input type="password" placeholder="Password" id="signUpPassword">
+              <button type="button" class="toggle-password" id="toggleSignUpPassword">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <span class="error" id="signUpPwdError"></span>
 
             <button type="button" id="btnSignUp" onclick="showProject(event)">Register</button>
            
@@ -85,49 +96,37 @@
           
           <div class="switch">
             <br>
-              <div class="accounts">
-                
-                <a href="https://accounts.google.com" target="_blank">
-                  <img src="images/externalLink/google.png" alt="Google" width="25">
-                </a>
-                <a href="https://github.com/login" target="_blank">
-                  <img src="images/externalLink/github.png" alt="github" width="25">
-                </a>
-                <a href="https://www.linkedin.com/login" target="_blank">
-                  <img src="images/externalLink/linkedin.png" alt="linkedin" width="25">
-                </a>
-              </div>
-              
-            </p>
+            <!-- <div class="accounts">
+              <a href="https://accounts.google.com" target="_blank">
+                <img src="images/externalLink/google.png" alt="Google" width="25">
+              </a>
+              <a href="https://github.com/login" target="_blank">
+                <img src="images/externalLink/github.png" alt="github" width="25">
+              </a>
+              <a href="https://www.linkedin.com/login" target="_blank">
+                <img src="images/externalLink/linkedin.png" alt="linkedin" width="25">
+              </a>
+            </div> -->
             Already have an account? <span onclick="switchToLogin()">Login</span>
           </div>
         </form>
       </div>
       <img class="ipic2" src="images/2.png" alt="">
-      <!-- <img class="ipic2" src="s1.png" alt=""> -->
-      
-      <!-- User Data Intput -->
 
     </div>
   </div>
 
-  
-  <!-- <button id="btn-toggle2" onclick="switchpage()">Switch</button> -->
-  
   <!-- Front end handler  -->
   <script src="03_javaScript/ui_handler.js"></script>
   
-  <!-- For resusing the elements-->
-  <script src = "04_DatabaseHandler/domElements.js" ></script>
+  <!-- For reusing the elements-->
+  <script src="04_DatabaseHandler/domElements.js"></script>
 
   <!-- For Validation -->
-  <script src = "03_javaScript/form_validation.js"></script>
+  <script src="03_javaScript/form_validation.js"></script>
 
-  <!-- For Firbase Authentication -->
+  <!-- For Firebase Authentication -->
   <script type="module" src="04_DatabaseHandler/auth.js"></script>
-
-  <!-- For FireBase DataBase -->
-   <!-- <script src = "04_DatabaseHandler/fireStoreDB.js"></script> -->
 
 </body>
 

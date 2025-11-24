@@ -99,12 +99,18 @@ window.logout = async function() {
             
             console.log("✅ User logged out");
             window.location.href = "../Main_index.html";
+
+            
+
             
         } catch (error) {
             console.error("❌ Error logging out:", error);
             alert("Failed to logout: " + error.message);
         }
     }
+
+      DOM.loginEmail.value = "";
+            DOM.loginPassword.value = "";
 }
 
 /**

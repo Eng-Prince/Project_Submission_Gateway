@@ -5,96 +5,183 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teacher Dashboard - Project Submissions</title>
   <link rel="stylesheet" href="../02_css/teacherDashboard.css">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
+  <!-- Dashboard Header -->
   <div class="dashboard-header">
-    <div>
-      <h1>👨‍🏫 Teacher Dashboard</h1>
-      <p>Review and manage student project submissions</p>
+    <div class="header-content">
+      <div class="header-left">
+        <h1><i class="fas fa-chalkboard-teacher"></i> Teacher Dashboard</h1>
+        <p>Review and manage student project submissions</p>
+      </div>
+      <div class="teacher-info">
+        <div class="info-item">
+          <i class="fas fa-user-tie"></i>
+          <div>
+            <span class="info-label">Logged in as</span>
+            <span class="info-value" id="teacherName">Loading...</span>
+          </div>
+        </div>
+        <div class="info-item">
+          <i class="fas fa-envelope"></i>
+          <div>
+            <span class="info-label">Email</span>
+            <span class="info-value" id="userEmail">Loading...</span>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="teacher-info">
-      <p><strong>Logged in as:</strong> <span id="teacherName">Loading...</span></p>
-      <p><strong>Email:</strong> <span id="userEmail">Loading...</span></p>
-    </div>
-    <div style="margin-top: 15px;">
-      <button class="btn btn-success" onclick="loadAllProjects()">🔄 Reload Projects</button>
-      <button class="btn btn-primary" onclick="skipAuth()">⚡ Skip Auth (Load All)</button>
-      <button class="btn btn-danger" onclick="logout()">Logout</button>
+    <div class="header-actions">
+      <button class="btn btn-success" onclick="loadAllProjects()">
+        <i class="fas fa-sync-alt"></i> Reload Projects
+      </button>
+      <button class="btn btn-primary" onclick="skipAuth()">
+        <i class="fas fa-bolt"></i> Skip Auth (Load All)
+      </button>
+      <button class="btn btn-danger" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
     </div>
   </div>
 
   <!-- Debug Section -->
   <div class="debug-section">
-    <h3>🔍 Information</h3>
+    <h3><i class="fas fa-info-circle"></i> System Information</h3>
     <div id="debugInfo">
-      <div class="debug-item">Checking authentication...</div>
+      <div class="debug-item">
+        <i class="fas fa-spinner fa-spin"></i> Checking authentication...
+      </div>
     </div>
   </div>
 
-  <!-- Statistics -->
+  <!-- Statistics Cards -->
   <div class="stats">
-    <div class="stat-card">
-      <h2 id="totalProjects">0</h2>
-      <p>Total Submissions</p>
+    <div class="stat-card stat-total">
+      <div class="stat-icon">
+        <i class="fas fa-folder-open"></i>
+      </div>
+      <div class="stat-content">
+        <h2 id="totalProjects">0</h2>
+        <p>Total Submissions</p>
+      </div>
     </div>
-    <div class="stat-card">
-      <h2 id="submittedProjects">0</h2>
-      <p>Pending Review</p>
+    <div class="stat-card stat-pending">
+      <div class="stat-icon">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="stat-content">
+        <h2 id="submittedProjects">0</h2>
+        <p>Pending Review</p>
+      </div>
     </div>
-    <div class="stat-card">
-      <h2 id="approvedProjects">0</h2>
-      <p>Approved</p>
+    <div class="stat-card stat-approved">
+      <div class="stat-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="stat-content">
+        <h2 id="approvedProjects">0</h2>
+        <p>Approved</p>
+      </div>
     </div>
-    <div class="stat-card">
-      <h2 id="rejectedProjects">0</h2>
-      <p>Rejected</p>
+    <div class="stat-card stat-rejected">
+      <div class="stat-icon">
+        <i class="fas fa-times-circle"></i>
+      </div>
+      <div class="stat-content">
+        <h2 id="rejectedProjects">0</h2>
+        <p>Rejected</p>
+      </div>
     </div>
   </div>
 
   <!-- Filters -->
   <div class="filters">
-    <h3>🔍 Filter Submissions</h3>
+    <h3><i class="fas fa-filter"></i> Filter Submissions</h3>
     <div class="filter-row">
-      <select id="filterStatus">
-        <option value="">All Statuses</option>
-        <option value="submitted">Submitted</option>
-        <option value="reviewed">Under Review</option>
-        <option value="approved">Approved</option>
-        <option value="rejected">Rejected</option>
-      </select>
+      <div class="filter-item">
+        <i class="fas fa-flag filter-icon"></i>
+        <select id="filterStatus">
+          <option value="">All Statuses</option>
+          <option value="submitted">Submitted</option>
+          <option value="reviewed">Under Review</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
       
-      <select id="filterBranch">
-        <option value="">All Branches</option>
-        <option value="Computer Science and Engineering">Computer Science</option>
-        <option value="Mechanical Engineering">Mechanical</option>
-        <option value="Civil Engineering">Civil</option>
-        <option value="Electrical Engineering">Electrical</option>
-      </select>
+      <div class="filter-item">
+        <i class="fas fa-graduation-cap filter-icon"></i>
+        <select id="filterBranch">
+          <option value="">All Branches</option>
+          <option value="Computer Science and Engineering">Computer Science</option>
+          <option value="Mechanical Engineering">Mechanical</option>
+          <option value="Civil Engineering">Civil</option>
+          <option value="Electrical Engineering">Electrical</option>
+          <option value="Electronics and Communication">Electronics</option>
+        </select>
+      </div>
       
-      <select id="filterSemester">
-        <option value="">All Semesters</option>
-        <option value="1">Semester 1</option>
-        <option value="2">Semester 2</option>
-        <option value="3">Semester 3</option>
-        <option value="4">Semester 4</option>
-        <option value="5">Semester 5</option>
-        <option value="6">Semester 6</option>
-        <option value="7">Semester 7</option>
-        <option value="8">Semester 8</option>
-      </select>
+      <div class="filter-item">
+        <i class="fas fa-calendar-alt filter-icon"></i>
+        <select id="filterYear">
+          <option value="">All Years</option>
+          <option value="1">1st Year (Sem 1-2)</option>
+          <option value="2">2nd Year (Sem 3-4)</option>
+          <option value="3">3rd Year (Sem 5-6)</option>
+          <option value="4">4th Year (Sem 7-8)</option>
+        </select>
+      </div>
       
-      <input type="text" id="filterStudent" placeholder="Search by student name or enrollment...">
+      <div class="filter-item">
+        <i class="fas fa-book-open filter-icon"></i>
+        <select id="filterSemester">
+          <option value="">All Semesters</option>
+          <option value="1">Semester 1</option>
+          <option value="2">Semester 2</option>
+          <option value="3">Semester 3</option>
+          <option value="4">Semester 4</option>
+          <option value="5">Semester 5</option>
+          <option value="6">Semester 6</option>
+          <option value="7">Semester 7</option>
+          <option value="8">Semester 8</option>
+        </select>
+      </div>
       
-      <button class="filter-btn" onclick="applyFilters()">Apply Filters</button>
+      <div class="filter-item filter-search">
+        <i class="fas fa-search filter-icon"></i>
+        <input type="text" id="filterStudent" placeholder="Search by student name or enrollment...">
+      </div>
+      
+      <button class="filter-btn" onclick="applyFilters()">
+        <i class="fas fa-check"></i> Apply Filters
+      </button>
+      <button class="filter-btn filter-btn-reset" onclick="resetFilters()">
+        <i class="fas fa-undo"></i> Reset
+      </button>
     </div>
   </div>
 
   <!-- Projects List -->
   <div class="projects-container">
-    <h3 style="margin-bottom: 20px; color: #333;">📚 Student Submissions</h3>
+    <div class="projects-header">
+      <h3><i class="fas fa-list"></i> Student Submissions</h3>
+      <div class="sort-options">
+        <label><i class="fas fa-sort"></i> Sort by:</label>
+        <select id="sortBy" onchange="applySorting()">
+          <option value="date-desc">Newest First</option>
+          <option value="date-asc">Oldest First</option>
+          <option value="name-asc">Name (A-Z)</option>
+          <option value="name-desc">Name (Z-A)</option>
+        </select>
+      </div>
+    </div>
     <div id="projectsList">
-      <div class="loading">⏳ Loading projects...</div>
+      <div class="loading">
+        <i class="fas fa-spinner fa-spin"></i> Loading projects...
+      </div>
     </div>
   </div>
 

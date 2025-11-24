@@ -20,6 +20,7 @@ function switchToSignup() {
 function switchToLogin() {
   console.log("Switch to login")
   container.classList.remove("active");
+  
   DOM.signUpEmail.value = "";
   DOM.signUpEnroll.value = "";
   DOM.signUpPwd.value = "";
@@ -97,5 +98,4 @@ function studentimg(role){
         image.src = "images/t1.png";
       }
 }
-
 
